@@ -1,31 +1,59 @@
+import org.jetbrains.compose.internal.utils.localPropertiesFile
+import java.io.FileInputStream
+import java.util.Locale
+import java.util.Properties
+import com.vanniktech.maven.publish.*
+
 plugins {
+
+    id("com.vanniktech.maven.publish") version "0.34.0"
+
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidKotlinMultiplatformLibrary)
 
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
 
-
+    id("maven-publish")
+    id("signing")
 }
 
+group = "com.tryingtorun.kmpcharts"
+version = libs.versions.kmpcharts.get()
+
+// Load local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+    val keyFile = localProperties.getProperty("signingKeyFile")
+    println("local.properties file found: $keyFile")
+} else
+    println("local.properties file not found")
+
+
 kotlin {
+
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
+
+
         namespace = "com.niallermoran.kmpcharts.library"
         compileSdk = 36
         minSdk = 24
 
-        withHostTestBuilder {
-        }
+        /*
+         withHostTestBuilder {
+         }
 
-        withDeviceTestBuilder {
+         *//*withDeviceTestBuilder {
             sourceSetTreeName = "test"
         }.configure {
             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }
+        }*/
     }
 
     // For iOS targets, this is also where you should
@@ -92,13 +120,13 @@ kotlin {
             }
         }
 
-        getByName("androidDeviceTest") {
-            dependencies {
-                implementation(libs.androidx.runner)
-                implementation(libs.androidx.core)
-                implementation(libs.androidx.testExt.junit)
-            }
-        }
+        /* getByName("androidDeviceTest") {
+             dependencies {
+                 implementation(libs.androidx.runner)
+                 implementation(libs.androidx.core)
+                 implementation(libs.androidx.testExt.junit)
+             }
+         }*/
 
         iosMain {
             dependencies {
@@ -111,4 +139,42 @@ kotlin {
         }
     }
 
+}
+
+// <module directory>/build.gradle.kts
+
+mavenPublishing {
+    publishToMavenCentral(
+        automaticRelease = true
+    )
+
+    signAllPublications()
+
+    coordinates("com.tryingtorun", "kmpcharts", "0.1.0.alpha")
+
+    pom {
+        name = "FMP Charts"
+        description = "A cross platform library for charts"
+        inceptionYear = "2025"
+        url = "https://github.com/niallermoran/fmpcharts/"
+        licenses {
+            license {
+                name = "The Apache License, Version 2.0"
+                url = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                distribution = "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            }
+        }
+        developers {
+            developer {
+                id = "niallermoran"
+                name = "Niall Moran"
+                url = "https://github.com/niallermoran/"
+            }
+        }
+        scm {
+            url = "https://github.com/niallermoran/fmpcharts/"
+            connection = "scm:git:git://github.com/niallermoran/fmpcharts.git"
+            developerConnection = "scm:git:ssh://git@github.com/niallermoran/fmpcharts.git"
+        }
+    }
 }

@@ -1,4 +1,5 @@
 [versions]
+kmpcharts = "0.1.0.alpha"
 agp = "8.11.1"
 android-compileSdk = "36"
 android-minSdk = "24"
