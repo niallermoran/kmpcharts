@@ -1,18 +1,17 @@
-import org.jetbrains.compose.internal.utils.localPropertiesFile
-import java.io.FileInputStream
-import java.util.Locale
 import java.util.Properties
-import com.vanniktech.maven.publish.*
 
 plugins {
 
     id("com.vanniktech.maven.publish") version "0.34.0"
 
-    alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.androidKotlinMultiplatformLibrary)
+   // alias(libs.plugins.androidKotlinMultiplatformLibrary)
 
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+
+    alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.androidLibrary)
+
 
     id("maven-publish")
     id("signing")
@@ -21,67 +20,18 @@ plugins {
 group = "com.tryingtorun.kmpcharts"
 version = libs.versions.kmpcharts.get()
 
-// Load local.properties
-val localProperties = Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(FileInputStream(localPropertiesFile))
-    val keyFile = localProperties.getProperty("signingKeyFile")
-    println("local.properties file found: $keyFile")
-} else
-    println("local.properties file not found")
 
 
 kotlin {
 
 
-    // Target declarations - add or remove as needed below. These define
-    // which platforms this KMP module supports.
-    // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
-    androidLibrary {
-
-
-        namespace = "com.niallermoran.kmpcharts.library"
-        compileSdk = 36
-        minSdk = 24
-
-        /*
-         withHostTestBuilder {
-         }
-
-         *//*withDeviceTestBuilder {
-            sourceSetTreeName = "test"
-        }.configure {
-            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        }*/
+    // Make sure you have all the targets your consuming app needs
+    androidTarget {
+        publishLibraryVariants("release")
     }
-
-    // For iOS targets, this is also where you should
-    // configure native binary output. For more information, see:
-    // https://kotlinlang.org/docs/multiplatform-build-native-binaries.html#build-xcframeworks
-
-    // A step-by-step guide on how to include this library in an XCode
-    // project can be found here:
-    // https://developer.android.com/kotlin/multiplatform/migrate
-    val xcfName = "libraryKit"
-
-    iosX64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    iosArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
-
-    iosSimulatorArm64 {
-        binaries.framework {
-            baseName = xcfName
-        }
-    }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     // Source set declarations.
     // Declaring a target automatically creates a source set with the same name. By default, the
@@ -106,44 +56,30 @@ kotlin {
             }
         }
 
-        commonTest {
-            dependencies {
-                implementation(libs.kotlin.test)
-            }
-        }
-
-        androidMain {
-            dependencies {
-                // Add Android-specific dependencies here. Note that this source set depends on
-                // commonMain by default and will correctly pull the Android artifacts of any KMP
-                // dependencies declared in commonMain.
-            }
-        }
-
-        /* getByName("androidDeviceTest") {
-             dependencies {
-                 implementation(libs.androidx.runner)
-                 implementation(libs.androidx.core)
-                 implementation(libs.androidx.testExt.junit)
-             }
-         }*/
-
-        iosMain {
-            dependencies {
-                // Add iOS-specific dependencies here. This a source set created by Kotlin Gradle
-                // Plugin (KGP) that each specific iOS target (e.g., iosX64) depends on as
-                // part of KMP’s default source set hierarchy. Note that this source set depends
-                // on common by default and will correctly pull the iOS artifacts of any
-                // KMP dependencies declared in commonMain.
-            }
-        }
     }
-
 }
 
 // <module directory>/build.gradle.kts
 
+
+val localProperties = Properties().apply {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localPropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+// Apply properties to project
+localProperties.forEach { key, value ->
+    project.ext.set(key.toString(), value)
+}
+
 mavenPublishing {
+
+
+    signing {
+
+    }
     publishToMavenCentral(
         automaticRelease = true
     )
@@ -176,5 +112,20 @@ mavenPublishing {
             connection = "scm:git:git://github.com/niallermoran/fmpcharts.git"
             developerConnection = "scm:git:ssh://git@github.com/niallermoran/fmpcharts.git"
         }
+    }
+}
+
+android {
+    namespace = "com.tryingtorun.kmpcharts"
+    compileSdk = 36  // Add this line
+
+    defaultConfig {
+        minSdk = 24
+        // Remove targetSdk for libraries (not needed)
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 }
