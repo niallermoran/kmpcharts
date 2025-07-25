@@ -24,3 +24,5 @@ To Use the Library:
 To see a complete example of how to setup the charts please see the sampleapp in `composeApp` folder of the repo. It is a multiplatform app that uses the kmpcharts library for iOS and Android.
 
 The charts library was created to fulfill the requirements of the tryingtorun app. So if you are a runner and want to simplify your running data into meaningful guidance then check it out at [www.tryingtorun.com](https://www.tryingtorun.com) 
+
+If you have any feedback or woould like to contribute please email me at info@tryingtorun.com
