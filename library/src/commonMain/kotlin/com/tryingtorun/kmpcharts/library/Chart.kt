@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts.library
+package com.tryingtorun.kmpcharts.library
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
@@ -146,7 +146,7 @@ fun Chart(
                     val draggableState = rememberDraggableState { change ->
 
                         previousSelectedIndex = selectedIndex
-                        val newPosition = dragPosition + Offset( x= change, y = 0f)
+                        val newPosition = dragPosition + Offset(x = change, y = 0f)
                         val foundIndex = ChartHelper.findClosestDataPointIndex(
                             touchPosition = newPosition,
                             data = data,
@@ -201,7 +201,7 @@ fun Chart(
                             drawRect(
                                 brush = SolidColor(config.rangeRectangleConfig.color),
                                 topLeft = Offset(
-                                    x = 0f,
+                                    x = chartDimensions.leftAreaWidthPixels,
                                     y = yBottom
                                 ),
                                 size = Size(
@@ -210,10 +210,9 @@ fun Chart(
                                 )
                             )
 
-                            val textX =
-                                (chartDimensions.plotAreaWidthPixels / 2) - textMeasurer.measure(
-                                    config.rangeRectangleConfig.label
-                                ).size.width / 2
+                            val textX = chartDimensions.leftAreaWidthPixels +
+                                    (chartDimensions.plotAreaWidthPixels / 2) -
+                                    textMeasurer.measure(config.rangeRectangleConfig.label).size.width / 2
 
                             val textHeight =
                                 textMeasurer.measure(config.rangeRectangleConfig.label).size.height

@@ -1,9 +1,9 @@
 [versions]
-kmpcharts = "0.1.1-alpha"
+kmpcharts = "0.2.3-alpha"
 agp = "8.11.1"
 android-compileSdk = "36"
 android-minSdk = "24"
-android-targetSdk = "35"
+android-targetSdk = "36"
 androidx-activity = "1.10.1"
 androidx-appcompat = "1.7.1"
 androidx-constraintlayout = "2.2.1"

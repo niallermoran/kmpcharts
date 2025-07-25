@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts.library
+package com.tryingtorun.kmpcharts.library
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding

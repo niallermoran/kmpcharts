@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts.library
+package com.tryingtorun.kmpcharts.library
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -64,7 +64,7 @@ data class RangeRectangleConfig(
     val color: Color = Color.Green.copy(alpha = 0.6f),
     val label: String = "",
     val labelStyle: TextStyle = TextStyle(
-        color = Color.White,
+        color = Color.Black,
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center

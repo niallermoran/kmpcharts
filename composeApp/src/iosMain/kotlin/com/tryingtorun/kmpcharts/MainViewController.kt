@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts
+package com.tryingtorun.kmpcharts
 
 import androidx.compose.ui.window.ComposeUIViewController
 

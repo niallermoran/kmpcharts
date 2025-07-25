@@ -1,16 +1,26 @@
 This is a Kotlin Multiplatform charts project targeting Android and iOS.
 
-* `/library` is the charts library that you can use in your compose multiplatform projects
+To Setup on your Compose/Kotlin multiplatform project:
 
-* `/composeApp` is a sample compose multiplatform app that uses the kmpcharts library
-  It contains several subfolders:
-  - `commonMain` is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    `iosMain` would be the right folder for such calls.
+* Add the latest version from Maven Central to the [versions] section of your libs.versions.toml file, e.g. `kmpcharts = "0.2.3-alpha"`
+* Add the following then to your libraries section kmpcharts = { module = "com.tryingtorun:kmpcharts", version.ref = "kmpcharts" }
+* In the commonMain section add  implementation(libs.kmpcharts)
 
-* `/iosApp` contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform, 
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+To Use the Library:
 
+* Currently the library only contains the following chart types with more planned
+  * LineChart
+  * BarChart
+* Each chart accepts a list of ChartDataPoint objects and a config object.
+* You can generate a chart once you have data with minimal configuration.
+* Each config object will contain any chart specific configuration plus common configuration objects that you can use across charts for consistency, e.g. axis configurations.
+* Each chart supports the following capabilities as of the time of writing:
+  * Data provided as a combination of X and Y Doubles and a summary string that you can define, which gets shown on popups.
+  * Each axis can have it's own formatter to dictate how the relevant Double value is presented on screen.
+  * Each axis can be controlled in terms of ticks/axis line and label display.
+  * Each chart can have a popup box that gets displayed when a user taps and drags their finger horizontally across the chart, snapping (with haptic feedback) to exact data points.
+  * Each chart can have a range rectangle displayed with control over styling as well as adding some text. This is useful for displaying target ranges.
+  
+To see a complete example of how to setup the charts please see the sampleapp in `composeApp` folder of the repo. It is a multiplatform app that uses the kmpcharts library for iOS and Android.
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+The charts library was created to fulfill the requirements of the tryingtorun app. So if you are a runner and want to simplify your running data into meaningful guidance then check it out at [www.tryingtorun.com](https://www.tryingtorun.com) 

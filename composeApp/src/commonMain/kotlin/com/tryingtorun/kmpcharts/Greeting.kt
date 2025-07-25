@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts
+package com.tryingtorun.kmpcharts
 
 class Greeting {
     private val platform = getPlatform()

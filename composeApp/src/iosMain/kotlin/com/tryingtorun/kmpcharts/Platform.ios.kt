@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts
+package com.tryingtorun.kmpcharts
 
 import platform.UIKit.UIDevice
 
@@ -7,3 +7,6 @@ class IOSPlatform: Platform {
 }
 
 actual fun getPlatform(): Platform = IOSPlatform()
+actual fun Double.toCurrencyString(): String {
+    TODO("Not yet implemented")
+}

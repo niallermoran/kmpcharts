@@ -1,4 +1,7 @@
-package com.niallermoran.kmpcharts.library
+package com.tryingtorun.kmpcharts.library
+
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 object Sample{
 
@@ -332,5 +335,13 @@ object Sample{
             summary = "Year ended with consolidation below $100K as investors took profits, but 2024 marked Bitcoin's transformation into mainstream asset."
         )
     )
+
+    fun getTemperatures95Range(): Pair<Double, Double> {
+        val mean =  irelandMonthlyTemperatureData.sumOf{ it.yValue } / irelandMonthlyTemperatureData.size
+        val stdDev = sqrt(irelandMonthlyTemperatureData.sumOf { (it.yValue - mean).pow(2) } / irelandMonthlyTemperatureData.size)
+        val lower = mean - (stdDev)
+        val upper = mean + (stdDev)
+        return Pair( lower, upper )
+    }
 
 }

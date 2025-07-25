@@ -54,11 +54,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.niallermoran.kmpcharts.sampleapp"
+    namespace = "com.tryingtorun.kmpcharts.sampleapp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.niallermoran.kmpcharts.sampleapp"
+        applicationId = "com.tryingtorun.kmpcharts.sampleapp"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1

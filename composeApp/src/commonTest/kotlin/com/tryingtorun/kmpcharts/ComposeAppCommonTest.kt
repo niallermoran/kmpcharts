@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts
+package com.tryingtorun.kmpcharts
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

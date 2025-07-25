@@ -61,32 +61,17 @@ kotlin {
 
 // <module directory>/build.gradle.kts
 
-
-val localProperties = Properties().apply {
-    val localPropertiesFile = rootProject.file("local.properties")
-    if (localPropertiesFile.exists()) {
-        localPropertiesFile.inputStream().use { load(it) }
-    }
-}
-
-// Apply properties to project
-localProperties.forEach { key, value ->
-    project.ext.set(key.toString(), value)
-}
-
 mavenPublishing {
 
+    version = libs.versions.kmpcharts.get()
 
-    signing {
-
-    }
     publishToMavenCentral(
-        automaticRelease = true
+        automaticRelease = false
     )
 
     signAllPublications()
 
-    coordinates("com.tryingtorun", "kmpcharts", "0.1.0.alpha")
+    coordinates("com.tryingtorun", "kmpcharts", version as String?)
 
     pom {
         name = "FMP Charts"

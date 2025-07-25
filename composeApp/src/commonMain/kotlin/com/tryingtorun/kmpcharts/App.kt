@@ -1,4 +1,4 @@
-package com.niallermoran.kmpcharts
+package com.tryingtorun.kmpcharts
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,19 +15,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
-import com.niallermoran.kmpcharts.library.AxisConfig
-import com.niallermoran.kmpcharts.library.BarChart
-import com.niallermoran.kmpcharts.library.BarChartConfig
-import com.niallermoran.kmpcharts.library.ChartConfig
-import com.niallermoran.kmpcharts.library.LineChart
-import com.niallermoran.kmpcharts.library.LineChartConfig
-import com.niallermoran.kmpcharts.library.PopupConfig
-import com.niallermoran.kmpcharts.library.Sample
+import com.tryingtorun.kmpcharts.library.AxisConfig
+import com.tryingtorun.kmpcharts.library.BarChart
+import com.tryingtorun.kmpcharts.library.BarChartConfig
+import com.tryingtorun.kmpcharts.library.ChartConfig
+import com.tryingtorun.kmpcharts.library.LineChart
+import com.tryingtorun.kmpcharts.library.LineChartConfig
+import com.tryingtorun.kmpcharts.library.PopupConfig
+import com.tryingtorun.kmpcharts.library.RangeRectangleConfig
+import com.tryingtorun.kmpcharts.library.Sample
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -66,11 +68,18 @@ fun App() {
                 )
 
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
-
-                    BarChart(
+                    val ninetyFivePercentRange = Sample.getTemperatures95Range()
+                    BarChart(   
                         data = Sample.irelandMonthlyTemperatureData,
                         config = BarChartConfig(
                             chartConfig = ChartConfig(
+                                rangeRectangleConfig = RangeRectangleConfig(
+                                    display = true,
+                                    minY = ninetyFivePercentRange.first.toFloat(),
+                                    maxY = ninetyFivePercentRange.second.toFloat(),
+                                    label = "68% Range - ${ninetyFivePercentRange.first.toInt()}°C-${ninetyFivePercentRange.second.toInt()}°C",
+
+                                ),
                                 leftGutterWidth = 15.dp, // use a small gutter so that the first and last bar are clearly visible. Change this based on your data set
                                 rightGutterWidth = 15.dp,
                                 bottomAxisConfig = AxisConfig(
@@ -104,7 +113,6 @@ fun App() {
                 )
 
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
-
                     LineChart(
                         data = Sample.bitcoinWeekly2024,
                         config = LineChartConfig(
@@ -118,13 +126,13 @@ fun App() {
                                 ),
                                 leftAxisConfig = AxisConfig(
                                     valueFormatter = {
-                                        "$${it.toInt()}"
+                                        it.toCurrencyString()
                                     },
                                     numberOfLabelsToShow = 5,
                                 ),
                                 popupConfig = PopupConfig(
                                     valueFormatter = {
-                                        "$${it.toInt()}"
+                                        it.toCurrencyString()
                                     },
                                 )
                             )
