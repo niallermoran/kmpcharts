@@ -67,18 +67,19 @@ fun App() {
                     modifier = Modifier.padding(6.dp)
                 )
 
+                val data = Sample.irelandMonthlyTemperatureData
+                val max = data.maxOf { it.yValue }
+
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
-                    val ninetyFivePercentRange = Sample.getTemperatures95Range()
-                    BarChart(   
-                        data = Sample.irelandMonthlyTemperatureData,
+                    BarChart(
+                        data = data,
                         config = BarChartConfig(
                             chartConfig = ChartConfig(
                                 rangeRectangleConfig = RangeRectangleConfig(
                                     display = true,
-                                    minY = ninetyFivePercentRange.first.toFloat(),
-                                    maxY = ninetyFivePercentRange.second.toFloat(),
-                                    label = "68% Range - ${ninetyFivePercentRange.first.toInt()}°C-${ninetyFivePercentRange.second.toInt()}°C",
-
+                                    minY = 10f,
+                                    maxY = 18f,
+                                    label = "Grass Growth Range",
                                 ),
                                 leftGutterWidth = 15.dp, // use a small gutter so that the first and last bar are clearly visible. Change this based on your data set
                                 rightGutterWidth = 15.dp,
@@ -96,6 +97,7 @@ fun App() {
                                 ),
                                 leftAxisConfig = AxisConfig(
                                     minValue = 0.0, // make sure we can see a bar for the smallest value by using an even smaller value for the axis (we could calculate this)
+                                    maxValue = if( max > 18.0 ) max else 20.0,
                                     valueFormatter = {
                                         "${it.toInt()}°C"
                                     },
@@ -115,7 +117,7 @@ fun App() {
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
                     LineChart(
                         data = Sample.bitcoinWeekly2024,
-                        config = LineChartConfig(
+                        lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
                                 bottomAxisConfig = AxisConfig(
                                     valueFormatter = {

@@ -123,7 +123,8 @@ object ChartHelper {
         density: Density,
         config: ChartConfig,
         data: List<ChartDataPoint>,
-        chartDimensions: ChartDimensions
+        chartDimensions: ChartDimensions,
+        barWidth: Dp = 0.dp // for bar charts we need to reduce the area by a bar width
     ): List<DataPointPlotCoordinates> {
 
         val minX = data.minOf { it.xValue }
@@ -134,13 +135,10 @@ object ChartHelper {
         val xRange = maxX - minX
         val yRange = maxY - minY
 
-        val plotAreaWidth =
-            chartDimensions.plotAreaWidthPixels - config.leftGutterWidth.toPx(density) - config.rightGutterWidth.toPx(
-                density
-            )
+        val plotAreaWidth = chartDimensions.plotAreaWidthPixels - config.leftGutterWidth.toPx(density) - config.rightGutterWidth.toPx(density) - barWidth.toPx(density)
         val plotAreaHeight = chartDimensions.plotAreaHeightPixels
         val plotAreaXOffset =
-            config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels
+            config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)/2
 
         return data.map { point ->
             val x = plotAreaXOffset + ((point.xValue - minX) / xRange) * plotAreaWidth
@@ -458,11 +456,16 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
     textMeasurer: TextMeasurer,
     config: ChartConfig,
     chartDimensions: ChartDimensions,
-    coordinates: List<DataPointPlotCoordinates>
+    coordinates: List<DataPointPlotCoordinates>,
+
+    /**
+     * Used for bar charts only when we need to shift left based on the calculated bar width, leave as zero for line charts, see https://github.com/niallermoran/kmpcharts/issues/3
+     */
+    barWidth: Dp = 0.dp
 ) {
 
     // the starting x-coord that everything else works from as the canvas covers the full width of the chart (to avoid clipping)
-    val startX = chartDimensions.leftAreaWidthPixels
+    val startX = chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)
 
     /**
      * Draw the axis line
