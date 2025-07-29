@@ -137,14 +137,15 @@ object ChartHelper {
 
         val plotAreaWidth = chartDimensions.plotAreaWidthPixels - config.leftGutterWidth.toPx(density) - config.rightGutterWidth.toPx(density) - barWidth.toPx(density)
         val plotAreaHeight = chartDimensions.plotAreaHeightPixels
-        val plotAreaXOffset =
-            config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)/2
+        val plotAreaXOffset = config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)/2
 
-        return data.map { point ->
-            val x = plotAreaXOffset + ((point.xValue - minX) / xRange) * plotAreaWidth
+        val list = data.map { point ->
+            val x = if( xRange == 0.0) plotAreaXOffset else plotAreaXOffset + ((point.xValue - minX) / xRange) * plotAreaWidth
             val y = plotAreaHeight * (1 - ((point.yValue - minY) / yRange))
             DataPointPlotCoordinates(x = x.toFloat(), y = y.toFloat(), dataPoint = point)
         }
+
+        return list
     }
 
 
@@ -158,13 +159,14 @@ object ChartHelper {
         data: List<ChartDataPoint>
     ): BarDimensions {
 
+        val availableWidth = chartDimensions.plotAreaWidthPixels - config.chartConfig.leftGutterWidth.toPx(density) - config.chartConfig.rightGutterWidth.toPx(density)
+
         /**
          * The usable width contains n bars and (n-1) spaces between bars which are a equal to the width of the bar by a factor
          * usableWidth = n * barWidth + (n-1) * spacing
          */
-        val barWidth =
-            chartDimensions.plotAreaWidthPixels / (data.size + config.barWidthFactor * (data.size - 1))
-        val spacingBetweenBars = barWidth * config.barWidthFactor
+        val barWidth = if( data.size == 1) availableWidth else  availableWidth/ (data.size + config.barWidthFactor * (data.size - 1))
+        val spacingBetweenBars = if( data.size == 1) 0f else barWidth * config.barWidthFactor
 
         return BarDimensions(
             barWidth = with(density) { barWidth.toDp() },

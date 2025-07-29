@@ -67,7 +67,7 @@ fun App() {
                     modifier = Modifier.padding(6.dp)
                 )
 
-                val data = Sample.irelandMonthlyTemperatureData
+                val data = Sample.irelandMonthlyTemperatureData.take(1)
                 val max = data.maxOf { it.yValue }
 
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
