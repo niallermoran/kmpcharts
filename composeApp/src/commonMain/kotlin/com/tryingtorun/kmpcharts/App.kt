@@ -15,7 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +41,8 @@ import kotlinx.datetime.*
 @Composable
 @Preview
 fun App() {
+
+
     MaterialTheme {
 
 
@@ -67,10 +68,14 @@ fun App() {
                     modifier = Modifier.padding(6.dp)
                 )
 
-                val data = Sample.irelandMonthlyTemperatureData.take(1)
-                val max = data.maxOf { it.yValue }
 
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
+
+
+                    val data = Sample.irelandMonthlyTemperatureData
+                    val max = data.maxOf { it.yValue }
+
+
                     BarChart(
                         data = data,
                         config = BarChartConfig(
@@ -115,8 +120,12 @@ fun App() {
                 )
 
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
+
+
+                    val data = Sample.bitcoinWeekly2024
+
                     LineChart(
-                        data = Sample.bitcoinWeekly2024,
+                        data = data,
                         lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
                                 bottomAxisConfig = AxisConfig(
