@@ -10,5 +10,5 @@ actual fun getPlatform(): Platform = WasmPlatform()
 
 
 actual fun Double.toCurrencyString(): String {
-    return "%.2f"
+    return "$${this.toInt()}"
 }
