@@ -16,9 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import com.tryingtorun.kmpcharts.library.AxisConfig
 import com.tryingtorun.kmpcharts.library.BarChart
@@ -29,13 +27,12 @@ import com.tryingtorun.kmpcharts.library.LineChartConfig
 import com.tryingtorun.kmpcharts.library.PopupConfig
 import com.tryingtorun.kmpcharts.library.RangeRectangleConfig
 import com.tryingtorun.kmpcharts.library.Sample
-import kotlinx.datetime.Month
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlin.time.ExperimentalTime
-
-import kotlinx.datetime.*
 
 
 @Composable
@@ -91,7 +88,7 @@ fun App() {
                                 bottomAxisConfig = AxisConfig(
                                     valueFormatter = {
                                         when (it.toInt()) {
-                                            in 1..12 -> Month(it.toInt()).name.toLowerCase(Locale.current)
+                                            in 1..12 -> it.toInt().toMonthShortName()
                                                 .take(3)
 
                                             else -> throw IllegalArgumentException("Month number must be between 1 and 12")
@@ -130,7 +127,7 @@ fun App() {
                             chartConfig = ChartConfig(
                                 bottomAxisConfig = AxisConfig(
                                     valueFormatter = {
-                                        formatDateFromEpoch(it.toLong())
+                                        it.toInt().toDateString()
                                     },
                                     numberOfLabelsToShow = 4, // don't want clutter on the bottom axis then change this, depending on your data set
                                     shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
@@ -157,17 +154,30 @@ fun App() {
     }
 }
 
-@OptIn(ExperimentalTime::class)
-fun formatDateFromEpoch(epochSeconds: Long): String {
-    val instant = Instant.fromEpochSeconds(epochSeconds)
-    val date = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = date.month.name.take(3).toInitialCaps()
-    val day = date.dayOfMonth.toString().padStart(2, '0')
-    return "$day $month"
+
+
+fun Int.toMonthShortName(): String {
+    return when(this){
+        1 -> "Jan"
+        2 -> "Feb"
+        3 -> "Mar"
+        4 -> "Apr"
+        5 -> "May"
+        6 -> "Jun"
+        7 -> "Jul"
+        8 -> "Aug"
+        9 -> "Sep"
+        10 -> "Oct"
+        11 -> "Nov"
+        12 -> "Dec"
+        else -> ""
+    }
 }
 
-fun String.toInitialCaps(): String {
-    return this.lowercase()
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+fun Int.toDateString(): String {
+    val instant = Instant.fromEpochSeconds(this.toLong())
+    val dt = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    return "${dt.date.dayOfMonth} ${(dt.date.month.ordinal+1).toMonthShortName()}"
 }
+
 
