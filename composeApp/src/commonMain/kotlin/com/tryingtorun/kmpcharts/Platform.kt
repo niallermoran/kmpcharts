@@ -6,4 +6,5 @@ interface Platform {
 
 expect fun Double.toCurrencyString(): String
 
+
 expect fun getPlatform(): Platform
