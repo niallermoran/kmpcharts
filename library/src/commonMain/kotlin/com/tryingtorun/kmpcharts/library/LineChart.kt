@@ -55,7 +55,7 @@ fun LineChart(
 
     Box(modifier = modifier) {
 
-        if(data.size > 1) {
+        if (data.size > 1) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
                 val height = maxHeight
@@ -81,53 +81,59 @@ fun LineChart(
 
                 Box(modifier = Modifier.fillMaxSize()) {
 
-                    /**
-                     * Left area axis, ticks and labels
-                     */
-                    Box(
-                        modifier = Modifier
-                            .width(chartDimensions.leftAreaWidth)
-                    ) {
-                        Canvas(
-                            modifier = Modifier.fillMaxSize()
+                    if (config.leftAxisConfig.display) {
+
+                        /**
+                         * Left area axis, ticks and labels
+                         */
+                        Box(
+                            modifier = Modifier
+                                .width(chartDimensions.leftAreaWidth)
                         ) {
+                            Canvas(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
 
-                            drawLeftAxisLabelsAndTicks(
-                                density = density,
-                                textMeasurer = textMeasurer,
-                                config = config,
-                                chartDimensions = chartDimensions,
-                                data = data
-                            )
-                        }
-                    }
-
-                    /**
-                     * Bottom area axis, ticks and labels
-                     */
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(chartDimensions.bottomAreaHeight)
-                            .offset {
-                                IntOffset(
-                                    0,
-                                    (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
+                                drawLeftAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config,
+                                    chartDimensions = chartDimensions,
+                                    data = data
                                 )
                             }
-                    ) {
-
-                        Canvas(modifier = Modifier.fillMaxSize()) {
-                            drawBottomAxisLabelsAndTicks(
-                                density = density,
-                                textMeasurer = textMeasurer,
-                                config = config,
-                                chartDimensions = chartDimensions,
-                                coordinates = coordinates
-                            )
                         }
                     }
 
+                    if (config.bottomAxisConfig.display) {
+                        /**
+                         * Bottom area axis, ticks and labels
+                         */
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartDimensions.bottomAreaHeight)
+                                .offset {
+                                    IntOffset(
+                                        0,
+                                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
+                                    )
+                                }
+                        ) {
+
+                            Canvas(modifier = Modifier.fillMaxSize()) {
+                                drawBottomAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config,
+                                    chartDimensions = chartDimensions,
+                                    coordinates = coordinates
+                                )
+                            }
+                        }
+                    }
+
+                    // The main chart drawing area
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -256,10 +262,12 @@ fun LineChart(
                 }
 
             }
-        }
-        else{
-            Box(modifier= Modifier.fillMaxSize().border(width=1.dp, color= Color.LightGray), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                Text(text="Not enough data", textAlign = TextAlign.Center)
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().border(width = 1.dp, color = Color.LightGray),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Text(text = "Not enough data", textAlign = TextAlign.Center)
             }
         }
     }
@@ -282,7 +290,7 @@ private fun DrawScope.drawChartLine(
         close()
     }
 
-    if( config.fillLine ) {
+    if (config.fillLine) {
         drawPath(
             path = filledPath,
             brush = config.fillBrush
@@ -352,12 +360,12 @@ private fun calculateControlPoints(
         val nextPoint = points[i + 1]
 
         val controlPoint1 = Offset(
-            (currentPoint.x + nextPoint.x)/2,
+            (currentPoint.x + nextPoint.x) / 2,
             currentPoint.y
         )
 
         val controlPoint2 = Offset(
-            (currentPoint.x + nextPoint.x)/2,
+            (currentPoint.x + nextPoint.x) / 2,
             nextPoint.y
         )
 

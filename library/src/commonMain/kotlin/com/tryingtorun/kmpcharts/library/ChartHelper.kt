@@ -190,32 +190,27 @@ object ChartHelper {
         /**
          * Calculations for left and bottom axis labels
          */
-        val leftLabelSize = calculateLeftAxisLabelSize(
+        val leftLabelSize = if( !config.leftAxisConfig.display) IntSize(0,0) else calculateLeftAxisLabelSize(
             density = density,
             data = data,
             config = config,
             textMeasurer = textMeasurer
         )
 
-        val leftLabelMaxWidth =
-            if (config.leftAxisConfig.lineStyle.display) with(density) { leftLabelSize.width.toDp() } else 0.dp
-        val bottomLabelSize = calculateBottomAxisLabelSize(data, config, textMeasurer)
+        val leftLabelMaxWidth =if (config.leftAxisConfig.lineStyle.display && config.leftAxisConfig.display) with(density) { leftLabelSize.width.toDp() } else 0.dp
+        val bottomLabelSize = if( config.bottomAxisConfig.display) calculateBottomAxisLabelSize(data, config, textMeasurer) else IntSize(0,0)
         val bottomLabelHeight = with(density) { bottomLabelSize.height.toDp() }
-        val bottomAreaHeight =
+        val bottomAreaHeight = if( !config.bottomAxisConfig.display) 0.dp else
             bottomLabelHeight + config.leftAxisConfig.labelPadding.calculateTopPadding() + config.leftAxisConfig.labelPadding.calculateBottomPadding() + config.bottomAxisConfig.tickLength
-        val leftAreaWidth = leftLabelMaxWidth.plus(
+        val leftAreaWidth = if( config.leftAxisConfig.display ) leftLabelMaxWidth.plus(
             (if (config.leftAxisConfig.showLabels) config.leftAxisConfig.labelPadding.leftPadding + config.leftAxisConfig.labelPadding.endPadding else 0.dp)
         ).plus(
             (if (config.leftAxisConfig.showTicks) config.leftAxisConfig.tickLength else 0.dp)
-        )
+        ) else 0.dp
 
 
         val plotAreaHeight = height - bottomAreaHeight
         val plotAreaWidth = width - leftAreaWidth
-
-        println("plotAreaWidth: $plotAreaWidth")
-        println("width: $width")
-        println("leftAreaWidth: $leftAreaWidth")
 
         return ChartDimensions(
 

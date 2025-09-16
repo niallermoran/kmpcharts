@@ -34,6 +34,11 @@ data class DataPointPlotCoordinates(
 
 data class AxisConfig(
 
+    /**
+     * Whether or not to display the axis, ticks and labels. If false, nothing will be drawn for the axis. Must be true to show ticks and labels
+     */
+    val display: Boolean = true,
+
 
     /**
      * The formatter to use to display values on the axis

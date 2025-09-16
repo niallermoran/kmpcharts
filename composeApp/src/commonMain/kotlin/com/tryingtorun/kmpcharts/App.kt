@@ -140,6 +140,7 @@ fun App() {
                         lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
                                 bottomAxisConfig = AxisConfig(
+                                    display = true,
                                     lineStyle = LineStyle(
                                         color = Color.DarkGray
                                     ),
@@ -153,6 +154,7 @@ fun App() {
                                     shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
                                 ),
                                 leftAxisConfig = AxisConfig(
+                                    display = true,
                                     lineStyle = LineStyle(
                                         color = Color.DarkGray
                                     ),
