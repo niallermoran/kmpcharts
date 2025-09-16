@@ -152,9 +152,10 @@ fun App() {
                                     },
                                     numberOfLabelsToShow = 4, // don't want clutter on the bottom axis then change this, depending on your data set
                                     shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
+                                    shiftFirstLabel = true
                                 ),
                                 leftAxisConfig = AxisConfig(
-                                    display = true,
+                                    display = false,
                                     lineStyle = LineStyle(
                                         color = Color.DarkGray
                                     ),
