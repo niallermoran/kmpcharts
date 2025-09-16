@@ -29,12 +29,12 @@ data class ChartConfig(
     /**
      * The configuration for the left axis
      */
-    val leftAxisConfig: AxisConfig = AxisConfig(),
+    val leftAxisConfig: AxisConfig,
 
     /**
      * The configuration for the bottom axis
      */
-    val bottomAxisConfig: AxisConfig = AxisConfig(),
+    val bottomAxisConfig: AxisConfig,
 
     /**
      * The left gutter provides a gap between the start of the chart and the left axis
@@ -123,7 +123,7 @@ data class LineChartConfig(
     /**
      * The chart configuration
      */
-    val chartConfig: ChartConfig = ChartConfig(),
+    val chartConfig: ChartConfig,
 
     /**
      * The brush to use to fill under the line
@@ -161,7 +161,7 @@ data class BarChartConfig(
     /**
      * The chart configuration
      */
-    val chartConfig: ChartConfig = ChartConfig(),
+    val chartConfig: ChartConfig,
 
     /**
      * The width of each bar compared to the space available

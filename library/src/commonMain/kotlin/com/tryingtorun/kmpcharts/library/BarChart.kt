@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 fun BarChart(
     data: List<ChartDataPoint>,
     modifier: Modifier = Modifier,
-    config: BarChartConfig = BarChartConfig()
+    config: BarChartConfig
 ) {
 
     val density = LocalDensity.current

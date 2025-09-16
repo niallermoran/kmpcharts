@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,6 +25,7 @@ import com.tryingtorun.kmpcharts.library.BarChartConfig
 import com.tryingtorun.kmpcharts.library.ChartConfig
 import com.tryingtorun.kmpcharts.library.LineChart
 import com.tryingtorun.kmpcharts.library.LineChartConfig
+import com.tryingtorun.kmpcharts.library.LineStyle
 import com.tryingtorun.kmpcharts.library.PopupConfig
 import com.tryingtorun.kmpcharts.library.RangeRectangleConfig
 import com.tryingtorun.kmpcharts.library.Sample
@@ -86,6 +88,12 @@ fun App() {
                                 leftGutterWidth = 15.dp, // use a small gutter so that the first and last bar are clearly visible. Change this based on your data set
                                 rightGutterWidth = 15.dp,
                                 bottomAxisConfig = AxisConfig(
+                                    lineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
+                                    gridLineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
                                     valueFormatter = {
                                         when (it.toInt()) {
                                             in 1..12 -> it.toInt().toMonthShortName()
@@ -104,6 +112,12 @@ fun App() {
                                         "${it.toInt()}°C"
                                     },
                                     numberOfLabelsToShow = 5,
+                                    lineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
+                                    gridLineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
                                 )
                             )
                         )
@@ -126,6 +140,12 @@ fun App() {
                         lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
                                 bottomAxisConfig = AxisConfig(
+                                    lineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
+                                    gridLineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
                                     valueFormatter = {
                                         it.toInt().toDateString()
                                     },
@@ -133,6 +153,12 @@ fun App() {
                                     shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
                                 ),
                                 leftAxisConfig = AxisConfig(
+                                    lineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
+                                    gridLineStyle = LineStyle(
+                                        color = Color.DarkGray
+                                    ),
                                     valueFormatter = {
                                         it.toCurrencyString()
                                     },

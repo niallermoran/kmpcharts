@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.dp
 fun LineChart(
     data: List<ChartDataPoint>,
     modifier: Modifier = Modifier,
-    lineChartConfig: LineChartConfig = LineChartConfig()
+    lineChartConfig: LineChartConfig
 ) {
     val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current

@@ -2,6 +2,7 @@ package com.tryingtorun.kmpcharts.library
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
@@ -42,12 +43,12 @@ data class AxisConfig(
     /**
      * The style for the axis
      */
-    val lineStyle: LineStyle = LineStyle(),
+    val lineStyle: LineStyle,
 
     /**
      * The style for the grid lines
      */
-    val gridLineStyle: LineStyle = LineStyle(),
+    val gridLineStyle: LineStyle,
 
     /**
      * Whether or not to show ticks for each point on the axis
@@ -67,7 +68,7 @@ data class AxisConfig(
     /**
      * The style of the labels
      */
-    val labelStyle: TextStyle = TextStyle(color = Color.Black, fontSize = 12.sp),
+    val labelStyle: TextStyle = TextStyle(),
 
     /**
      * The padding around the labels
@@ -108,7 +109,7 @@ data class AxisConfig(
 
 data class LineStyle(
     val display: Boolean = true,
-    val color: Color = Color.Black,
+    val color: Color,
     val stroke: Stroke = Stroke(
         width = 2f,
         cap = StrokeCap.Round,
