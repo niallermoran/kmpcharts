@@ -84,11 +84,11 @@ object Sample{
             yValue = 42890.25,
             summary = "Some profit-taking and consolidation occurred as markets awaited final regulatory decisions on spot Bitcoin ETF applications."
         ),
-        ChartDataPoint(
+      /*  ChartDataPoint(
             xValue = 1705881600.0, // January 22, 2024 00:00:00 UTC
             yValue = 39523.63,
             summary = "Bitcoin hit its yearly low amid broader market uncertainty and regulatory concerns before the historic ETF approvals."
-        ),
+        ),*/
         ChartDataPoint(
             xValue = 1706486400.0, // January 29, 2024 00:00:00 UTC
             yValue = 43250.80,
@@ -99,17 +99,17 @@ object Sample{
             yValue = 47150.90,
             summary = "Bitcoin surged on growing confidence about imminent ETF approvals and increasing institutional adoption momentum."
         ),
-        ChartDataPoint(
+     /*   ChartDataPoint(
             xValue = 1707696000.0, // February 12, 2024 00:00:00 UTC
             yValue = 50850.25,
             summary = "Strong upward momentum continued as the first Bitcoin ETFs began trading, attracting significant institutional capital inflows."
-        ),
+        ),*/
         ChartDataPoint(
             xValue = 1708300800.0, // February 19, 2024 00:00:00 UTC
             yValue = 52750.45,
             summary = "Bitcoin maintained strength as ETF trading volumes exceeded expectations and corporate adoption announcements increased."
         ),
-        ChartDataPoint(
+       /* ChartDataPoint(
             xValue = 1708905600.0, // February 26, 2024 00:00:00 UTC
             yValue = 57240.70,
             summary = "Late February saw continued appreciation as institutional demand through ETFs remained robust and supply dynamics tightened."
@@ -118,7 +118,7 @@ object Sample{
             xValue = 1709510400.0, // March 4, 2024 00:00:00 UTC
             yValue = 62890.15,
             summary = "March opened with strong gains as Bitcoin approached previous all-time highs, driven by sustained ETF inflows and institutional interest."
-        ),
+        ),*/
         ChartDataPoint(
             xValue = 1710115200.0, // March 11, 2024 00:00:00 UTC
             yValue = 70250.80,
@@ -139,7 +139,7 @@ object Sample{
             yValue = 66750.40,
             summary = "April began with continued consolidation as markets digested the massive gains and institutional flows stabilized."
         ),
-        ChartDataPoint(
+    /*    ChartDataPoint(
             xValue = 1712534400.0, // April 8, 2024 00:00:00 UTC
             yValue = 71200.90,
             summary = "Bitcoin found renewed strength in early April as the halving event approached, historically a bullish catalyst for prices."
@@ -158,7 +158,7 @@ object Sample{
             xValue = 1714348800.0, // April 29, 2024 00:00:00 UTC
             yValue = 63890.85,
             summary = "Post-halving stabilization as markets adjusted to the reduced supply schedule and continued institutional accumulation."
-        ),
+        ),*/
         ChartDataPoint(
             xValue = 1714953600.0, // May 6, 2024 00:00:00 UTC
             yValue = 61750.20,

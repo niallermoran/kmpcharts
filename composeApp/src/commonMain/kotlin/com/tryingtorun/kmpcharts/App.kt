@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.tryingtorun.kmpcharts.library.AxisConfig
 import com.tryingtorun.kmpcharts.library.BarChart
 import com.tryingtorun.kmpcharts.library.BarChartConfig
+import com.tryingtorun.kmpcharts.library.BottomAxisTicksAndLabelsDrawMethod
 import com.tryingtorun.kmpcharts.library.ChartConfig
 import com.tryingtorun.kmpcharts.library.LineChart
 import com.tryingtorun.kmpcharts.library.LineChartConfig
@@ -139,6 +140,7 @@ fun App() {
                         data = data,
                         lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
+                                bottomAxisMethod = BottomAxisTicksAndLabelsDrawMethod.DIVIDE_EQUALLY,
                                 bottomAxisConfig = AxisConfig(
                                     display = true,
                                     lineStyle = LineStyle(
@@ -150,7 +152,7 @@ fun App() {
                                     valueFormatter = {
                                         it.toInt().toDateString()
                                     },
-                                    numberOfLabelsToShow = 4, // don't want clutter on the bottom axis then change this, depending on your data set
+                                    numberOfLabelsToShow = 5, // don't want clutter on the bottom axis then change this, depending on your data set
                                     shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
                                     shiftFirstLabel = true
                                 ),
@@ -165,7 +167,7 @@ fun App() {
                                     valueFormatter = {
                                         it.toCurrencyString()
                                     },
-                                    numberOfLabelsToShow = 5,
+                                    numberOfLabelsToShow = 10,
                                 ),
                                 popupConfig = PopupConfig(
                                     valueFormatter = {

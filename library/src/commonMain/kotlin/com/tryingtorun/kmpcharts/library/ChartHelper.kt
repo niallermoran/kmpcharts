@@ -135,12 +135,19 @@ object ChartHelper {
         val xRange = maxX - minX
         val yRange = maxY - minY
 
-        val plotAreaWidth = chartDimensions.plotAreaWidthPixels - config.leftGutterWidth.toPx(density) - config.rightGutterWidth.toPx(density) - barWidth.toPx(density)
+        val plotAreaWidth =
+            chartDimensions.plotAreaWidthPixels - config.leftGutterWidth.toPx(density) - config.rightGutterWidth.toPx(
+                density
+            ) - barWidth.toPx(density)
         val plotAreaHeight = chartDimensions.plotAreaHeightPixels
-        val plotAreaXOffset = config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)/2
+        val plotAreaXOffset =
+            config.leftGutterWidth.toPx(density) + chartDimensions.leftAreaWidthPixels + barWidth.toPx(
+                density
+            ) / 2
 
         val list = data.map { point ->
-            val x = if( xRange == 0.0) plotAreaXOffset else plotAreaXOffset + ((point.xValue - minX) / xRange) * plotAreaWidth
+            val x =
+                if (xRange == 0.0) plotAreaXOffset else plotAreaXOffset + ((point.xValue - minX) / xRange) * plotAreaWidth
             val y = plotAreaHeight * (1 - ((point.yValue - minY) / yRange))
             DataPointPlotCoordinates(x = x.toFloat(), y = y.toFloat(), dataPoint = point)
         }
@@ -159,14 +166,18 @@ object ChartHelper {
         data: List<ChartDataPoint>
     ): BarDimensions {
 
-        val availableWidth = chartDimensions.plotAreaWidthPixels - config.chartConfig.leftGutterWidth.toPx(density) - config.chartConfig.rightGutterWidth.toPx(density)
+        val availableWidth =
+            chartDimensions.plotAreaWidthPixels - config.chartConfig.leftGutterWidth.toPx(density) - config.chartConfig.rightGutterWidth.toPx(
+                density
+            )
 
         /**
          * The usable width contains n bars and (n-1) spaces between bars which are a equal to the width of the bar by a factor
          * usableWidth = n * barWidth + (n-1) * spacing
          */
-        val barWidth = if( data.size == 1) availableWidth else  availableWidth/ (data.size + config.barWidthFactor * (data.size - 1))
-        val spacingBetweenBars = if( data.size == 1) 0f else barWidth * config.barWidthFactor
+        val barWidth =
+            if (data.size == 1) availableWidth else availableWidth / (data.size + config.barWidthFactor * (data.size - 1))
+        val spacingBetweenBars = if (data.size == 1) 0f else barWidth * config.barWidthFactor
 
         return BarDimensions(
             barWidth = with(density) { barWidth.toDp() },
@@ -190,19 +201,27 @@ object ChartHelper {
         /**
          * Calculations for left and bottom axis labels
          */
-        val leftLabelSize = if( !config.leftAxisConfig.display) IntSize(0,0) else calculateLeftAxisLabelSize(
-            density = density,
-            data = data,
-            config = config,
-            textMeasurer = textMeasurer
-        )
+        val leftLabelSize =
+            if (!config.leftAxisConfig.display) IntSize(0, 0) else calculateLeftAxisLabelSize(
+                density = density,
+                data = data,
+                config = config,
+                textMeasurer = textMeasurer
+            )
 
-        val leftLabelMaxWidth =if (config.leftAxisConfig.lineStyle.display && config.leftAxisConfig.display) with(density) { leftLabelSize.width.toDp() } else 0.dp
-        val bottomLabelSize = if( config.bottomAxisConfig.display) calculateBottomAxisLabelSize(data, config, textMeasurer) else IntSize(0,0)
+        val leftLabelMaxWidth =
+            if (config.leftAxisConfig.lineStyle.display && config.leftAxisConfig.display) with(
+                density
+            ) { leftLabelSize.width.toDp() } else 0.dp
+        val bottomLabelSize = if (config.bottomAxisConfig.display) calculateBottomAxisLabelSize(
+            data,
+            config,
+            textMeasurer
+        ) else IntSize(0, 0)
         val bottomLabelHeight = with(density) { bottomLabelSize.height.toDp() }
-        val bottomAreaHeight = if( !config.bottomAxisConfig.display) 0.dp else
+        val bottomAreaHeight = if (!config.bottomAxisConfig.display) 0.dp else
             bottomLabelHeight + config.leftAxisConfig.labelPadding.calculateTopPadding() + config.leftAxisConfig.labelPadding.calculateBottomPadding() + config.bottomAxisConfig.tickLength
-        val leftAreaWidth = if( config.leftAxisConfig.display ) leftLabelMaxWidth.plus(
+        val leftAreaWidth = if (config.leftAxisConfig.display) leftLabelMaxWidth.plus(
             (if (config.leftAxisConfig.showLabels) config.leftAxisConfig.labelPadding.leftPadding + config.leftAxisConfig.labelPadding.endPadding else 0.dp)
         ).plus(
             (if (config.leftAxisConfig.showTicks) config.leftAxisConfig.tickLength else 0.dp)
@@ -476,38 +495,108 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
         )
     }
 
-    // depending on how many ticks/labels we want, we may need to skip some
-    // calculate the skip value which is the number of coordinates to skip (if any)
-    // taking into account that the first and last label will be displayed
-    val skip = if (config.bottomAxisConfig.numberOfLabelsToShow >= coordinates.size) 0
-    else ((coordinates.size - 2) / (config.bottomAxisConfig.numberOfLabelsToShow - 1))
+    if (config.bottomAxisMethod == BottomAxisTicksAndLabelsDrawMethod.MATCH_POINT) {
 
-    var lastIndexDisplayed = 0 // keep track of last index displayed so we can skip
+        // depending on how many ticks/labels we want, we may need to skip some
+        // calculate the skip value which is the number of coordinates to skip (if any)
+        // taking into account that the first and last label will be displayed
+        val skip = if (config.bottomAxisConfig.numberOfLabelsToShow >= coordinates.size) 0
+        else ((coordinates.size - 2) / (config.bottomAxisConfig.numberOfLabelsToShow - 1))
 
-    coordinates.forEachIndexed { index, dataPoint ->
+        var lastIndexDisplayed = 0 // keep track of last index displayed so we can skip
 
-        val isFirst = index == 0
-        val isLast = index == coordinates.size - 1
+        coordinates.forEachIndexed { index, dataPoint ->
 
-        val show = isFirst || isLast || index > lastIndexDisplayed + skip
+            val isFirst = index == 0
+            val isLast = index == coordinates.size - 1
 
-        if (show) {
+            val show = isFirst || isLast || index > lastIndexDisplayed + skip
 
-            lastIndexDisplayed = index
+            if (show) {
+
+                lastIndexDisplayed = index
+
+                // get the label details
+                val label = config.bottomAxisConfig.valueFormatter(dataPoint.dataPoint.xValue)
+                val labelSize =
+                    ChartHelper.measureBottomAxisLabelSize(label, density, textMeasurer, config)
+                val labelLengthPx = labelSize.width
+
+                // get the X coordinate for the label
+                val xLabelTopLeft = if (config.bottomAxisConfig.shiftFirstLabel && isFirst)
+                    dataPoint.x
+                else if (config.bottomAxisConfig.shiftLastLabel && isLast)
+                    dataPoint.x - labelLengthPx
+                else
+                    dataPoint.x - (labelLengthPx / 2)
+
+                // get the Y coordinate
+                val yTickStart = 0f
+                val yTickEnd = config.bottomAxisConfig.tickLength.toPx(density)
+                val yLabelTopLeft =
+                    config.leftAxisConfig.labelPadding.topPadding.toPx(density) + if (config.bottomAxisConfig.showTicks) config.bottomAxisConfig.tickLength.toPx(
+                        density
+                    ) else 0f
+
+                // draw the tick line
+                if (config.bottomAxisConfig.showTicks) {
+                    drawLine(
+                        color = config.bottomAxisConfig.lineStyle.color,
+                        start = Offset(dataPoint.x, yTickStart),
+                        end = Offset(dataPoint.x, yTickEnd),
+                        strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width
+                    )
+                }
+
+                if (config.bottomAxisConfig.showLabels) {
+                    drawText(
+                        textMeasurer = textMeasurer,
+                        text = label,
+                        topLeft = Offset(
+                            xLabelTopLeft,
+                            yLabelTopLeft
+                        ),
+                        style = config.bottomAxisConfig.labelStyle
+                    )
+                }
+            }
+        }
+
+    } else {
+
+
+        // get the values of x that split the x-axis equally, assuming first and last always are shown
+        val divisions =
+            if (config.bottomAxisConfig.numberOfLabelsToShow > 2) config.bottomAxisConfig.numberOfLabelsToShow - 1 else 0
+        val deltaX = chartDimensions.plotAreaWidthPixels / divisions
+        val equallyDividedXPositions = (0..divisions).map { startX + (it * deltaX) }
+
+        val minXValue = coordinates.minOf { it.dataPoint.xValue }
+        val maxXValue = coordinates.maxOf { it.dataPoint.xValue }
+        val xValueRange = maxXValue - minXValue
+        val equallyDividedXValues =
+            (0..divisions).map { minXValue + (it * xValueRange / divisions) }
+
+        equallyDividedXPositions.forEachIndexed { index, x ->
+
+            val isFirst = index == 0
+            val isLast = index == equallyDividedXPositions.size - 1
+
+            val xValue = equallyDividedXValues[index].toDouble()
 
             // get the label details
-            val label = config.bottomAxisConfig.valueFormatter(dataPoint.dataPoint.xValue)
+            val label = config.bottomAxisConfig.valueFormatter(xValue)
             val labelSize =
                 ChartHelper.measureBottomAxisLabelSize(label, density, textMeasurer, config)
             val labelLengthPx = labelSize.width
 
             // get the X coordinate for the label
             val xLabelTopLeft = if (config.bottomAxisConfig.shiftFirstLabel && isFirst)
-                dataPoint.x
+                x
             else if (config.bottomAxisConfig.shiftLastLabel && isLast)
-                dataPoint.x - labelLengthPx
+                x - labelLengthPx
             else
-                dataPoint.x - (labelLengthPx / 2)
+                x - (labelLengthPx / 2)
 
             // get the Y coordinate
             val yTickStart = 0f
@@ -521,8 +610,8 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
             if (config.bottomAxisConfig.showTicks) {
                 drawLine(
                     color = config.bottomAxisConfig.lineStyle.color,
-                    start = Offset(dataPoint.x, yTickStart),
-                    end = Offset(dataPoint.x, yTickEnd),
+                    start = Offset(x, yTickStart),
+                    end = Offset(x, yTickEnd),
                     strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width
                 )
             }
@@ -539,70 +628,9 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
                 )
             }
         }
+
     }
-
-
-    /*
-        val maxValue = data.maxOfOrNull { it.xValue } ?: 0.0
-        val minValue = data.minOfOrNull { it.xValue } ?: 0.0
-        val tickLength = config.bottomAxisConfig.tickLength
-        val tickLengthInPixels = tickLength.toPx(density)
-        val valueRange = maxValue - minValue
-        val valueDelta = valueRange / (config.bottomAxisConfig.numberOfLabelsToShow - 1)
-
-        for (i in 1..config.bottomAxisConfig.numberOfLabelsToShow) {
-
-            val isFirst = i == 1
-            val isLast = i == config.bottomAxisConfig.numberOfLabelsToShow
-
-            val value = minValue + (i - 1) * valueDelta
-            val ratio = (value - minValue).toFloat() / valueRange.toFloat()
-
-            val label = config.bottomAxisConfig.valueFormatter(value)
-            val labelSize = ChartHelper.measureBottomAxisLabelSize(label, density, textMeasurer, config)
-            val labelLengthPx = labelSize.width
-
-            // get the coordinates for the tick and label
-            val xTick = startX + (width * ratio)
-            val yTickStart = 0f
-            val yTickEnd = tickLengthInPixels
-            val yLabelTopLeft =
-                config.leftAxisConfig.labelPadding.topPadding.toPx(density) + if (config.bottomAxisConfig.showTicks) tickLengthInPixels else 0f
-
-            val xLabelTopLeft = if (config.bottomAxisConfig.shiftFirstLabel && isFirst)
-                xTick
-            else if (config.bottomAxisConfig.shiftLastLabel && isLast)
-                xTick - labelLengthPx
-            else
-                xTick - (labelLengthPx / 2)
-
-
-            // draw the tick line
-            if (config.bottomAxisConfig.showTicks) {
-                drawLine(
-                    color = config.bottomAxisConfig.lineStyle.color,
-                    start = Offset(xTick, yTickStart.toFloat()),
-                    end = Offset(xTick, yTickEnd.toFloat()),
-                    strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width
-                )
-            }
-
-            if (config.bottomAxisConfig.showLabels) {
-                drawText(
-                    textMeasurer = textMeasurer,
-                    text = label,
-                    topLeft = Offset(
-                        xLabelTopLeft,
-                        yLabelTopLeft
-                    ),
-                    style = config.bottomAxisConfig.labelStyle
-                )
-            }
-
-        }*/
-
 }
-
 
 
 internal fun Double.toPrecisionString(precision: Int): String {
