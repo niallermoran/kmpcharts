@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.random.Random
 
 
 @Composable
@@ -75,10 +77,17 @@ fun App() {
                     val data = Sample.irelandMonthlyTemperatureData
                     val max = data.maxOf { it.yValue }
 
+                    val brushes = data.map { it ->
+                        val red = Random.nextFloat()
+                        val green = Random.nextFloat()
+                        val blue = Random.nextFloat()
+                        SolidColor(Color(red = red, green = green, blue = blue))
+                    }
 
                     BarChart(
                         data = data,
                         config = BarChartConfig(
+                            barFillBrushes = brushes,
                             chartConfig = ChartConfig(
                                 rangeRectangleConfig = RangeRectangleConfig(
                                     display = true,
@@ -108,7 +117,7 @@ fun App() {
                                 ),
                                 leftAxisConfig = AxisConfig(
                                     minValue = 0.0, // make sure we can see a bar for the smallest value by using an even smaller value for the axis (we could calculate this)
-                                    maxValue = if( max > 18.0 ) max else 20.0,
+                                    maxValue = if (max > 18.0) max else 20.0,
                                     valueFormatter = {
                                         "${it.toInt()}°C"
                                     },
@@ -186,9 +195,8 @@ fun App() {
 }
 
 
-
 fun Int.toMonthShortName(): String {
-    return when(this){
+    return when (this) {
         1 -> "Jan"
         2 -> "Feb"
         3 -> "Mar"
@@ -208,7 +216,7 @@ fun Int.toMonthShortName(): String {
 fun Int.toDateString(): String {
     val instant = Instant.fromEpochSeconds(this.toLong())
     val dt = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    return "${dt.date.dayOfMonth} ${(dt.date.month.ordinal+1).toMonthShortName()}"
+    return "${dt.date.dayOfMonth} ${(dt.date.month.ordinal + 1).toMonthShortName()}"
 }
 
 

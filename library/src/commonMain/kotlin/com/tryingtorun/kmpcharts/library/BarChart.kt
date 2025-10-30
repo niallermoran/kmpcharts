@@ -179,8 +179,14 @@ fun BarChart(
                         ) {
                             coordinates.forEachIndexed { index, coordinate ->
 
+                                val brush = if ( config.barFillBrushes.isNullOrEmpty() || index >= config.barFillBrushes.size ) {
+                                    config.barFillBrush
+                                } else {
+                                    config.barFillBrushes[index]
+                                }
+
                                 drawRoundRect(
-                                    brush = config.barFillBrush,
+                                    brush = brush,
                                     topLeft = Offset(
                                         coordinate.x - barDimensions.barWidthInPixels / 2,
                                         coordinate.y

@@ -83,10 +83,10 @@ mavenPublishing {
     coordinates("com.tryingtorun", "kmpcharts", version as String?)
 
     pom {
-        name = "FMP Charts"
+        name = "KMP Charts"
         description = "A cross platform library for charts"
         inceptionYear = "2025"
-        url = "https://github.com/niallermoran/fmpcharts/"
+        url = "https://github.com/niallermoran/kmpcharts/"
         licenses {
             license {
                 name = "The Apache License, Version 2.0"
@@ -102,9 +102,9 @@ mavenPublishing {
             }
         }
         scm {
-            url = "https://github.com/niallermoran/fmpcharts/"
-            connection = "scm:git:git://github.com/niallermoran/fmpcharts.git"
-            developerConnection = "scm:git:ssh://git@github.com/niallermoran/fmpcharts.git"
+            url = "https://github.com/niallermoran/kmpcharts/"
+            connection = "scm:git:git://github.com/niallermoran/kmpcharts.git"
+            developerConnection = "scm:git:ssh://git@github.com/niallermoran/kmpcharts.git"
         }
     }
 }
