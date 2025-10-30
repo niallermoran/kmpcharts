@@ -54,7 +54,7 @@ fun BarChart(
 
     Box(modifier = modifier) {
 
-        if(data.isNotEmpty()) {
+        if (data.isNotEmpty()) {
             BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
 
                 val height = maxHeight
@@ -179,11 +179,12 @@ fun BarChart(
                         ) {
                             coordinates.forEachIndexed { index, coordinate ->
 
-                                val brush = if ( config.barFillBrushes.isNullOrEmpty() || index >= config.barFillBrushes.size ) {
-                                    config.barFillBrush
-                                } else {
-                                    config.barFillBrushes[index]
-                                }
+                                val brush =
+                                    if (config.barFillBrushes.isNullOrEmpty() || index >= config.barFillBrushes.size) {
+                                        config.barFillBrush
+                                    } else {
+                                        config.barFillBrushes[index]
+                                    }
 
                                 drawRoundRect(
                                     brush = brush,
@@ -200,6 +201,27 @@ fun BarChart(
                                         config.barCornerRadius
                                     )
                                 )
+
+                                // place text label if formatter is provided
+                                if (config.labelFormatter != null) {
+
+                                    val label = config.labelFormatter.invoke(
+                                        index,
+                                        data[index].xValue,
+                                        data[index].yValue
+                                    )
+
+                                    drawText(
+                                        textMeasurer = textMeasurer,
+                                        text = label,
+                                        topLeft = Offset(
+                                            x = coordinate.x - textMeasurer.measure(label).size.width / 2,
+                                            y = coordinate.y - textMeasurer.measure(label).size.height - 5.dp.toPx(
+                                                density
+                                            )
+                                        )
+                                    )
+                                }
 
                             }
                             if (config.chartConfig.rangeRectangleConfig.display) {
@@ -284,10 +306,12 @@ fun BarChart(
                 }
 
             }
-        }
-        else{
-            Box(modifier= Modifier.fillMaxSize().border(width=1.dp, color= Color.LightGray), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                Text(text="No Data", textAlign = TextAlign.Center)
+        } else {
+            Box(
+                modifier = Modifier.fillMaxSize().border(width = 1.dp, color = Color.LightGray),
+                contentAlignment = androidx.compose.ui.Alignment.Center
+            ) {
+                Text(text = "No Data", textAlign = TextAlign.Center)
             }
         }
     }

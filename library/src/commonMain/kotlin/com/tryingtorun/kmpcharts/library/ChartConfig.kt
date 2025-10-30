@@ -196,7 +196,13 @@ data class BarChartConfig(
     /**
      * The list of brushes to use to fill each bar individually. If this is provided, it will override [barFillBrush] for each bar based on its index
      */
-    val barFillBrushes: List<Brush>? = null
+    val barFillBrushes: List<Brush>? = null,
+
+
+    /**
+     * The formatter to use to display values on top of the bars, leave nul for no labels
+     */
+    val labelFormatter: ((index:Int, x:Double, y:Double) -> String)? = null,
 
 )
 
