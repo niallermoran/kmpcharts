@@ -187,12 +187,16 @@ data class BarChartConfig(
     val barCornerRadius: Float = 10f,
 
     /**
-     * The color of each bar
+     * The default color of each bar
      */
     val barFillBrush: Brush = Brush.linearGradient(
         colors = listOf(Color(0xFF45B7D1), Color(0xFF96CEB4))
-    )
+    ),
 
+    /**
+     * The list of brushes to use to fill each bar individually. If this is provided, it will override [barFillBrush] for each bar based on its index
+     */
+    val barFillBrushes: List<Brush>? = null
 
 )
 
