@@ -87,12 +87,12 @@ fun App() {
                     BarChart(
                         data = data,
                         config = BarChartConfig(
-                            labelFormatter = { i, x,y ->
+                            labelFormatter = { i, data ->
 
                                 if( i % 2 == 0 )  // show label for every second bar only to avoid clutter
                                     ""
                                 else
-                                    "${y.toInt()}°C"
+                                    "${data.yValue.toInt()}°C"
                             },
                             barFillBrushes = brushes,
                             chartConfig = ChartConfig(

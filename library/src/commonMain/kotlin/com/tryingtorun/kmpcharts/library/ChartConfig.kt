@@ -1,4 +1,5 @@
 package com.tryingtorun.kmpcharts.library
+
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -83,8 +84,7 @@ data class RangeRectangleConfig(
         textAlign = TextAlign.Center
     ),
     val labelPosition: LabelPosition = LabelPosition.CENTER
-)
-{
+) {
     enum class LabelPosition {
         CENTER, TOP, BOTTOM
     }
@@ -202,7 +202,17 @@ data class BarChartConfig(
     /**
      * The formatter to use to display values on top of the bars, leave nul for no labels
      */
-    val labelFormatter: ((index:Int, x:Double, y:Double) -> String)? = null,
+    val labelFormatter: ((index: Int, data: ChartDataPoint) -> String)? = null,
+
+    /**
+     * The style of the labels
+     */
+    val labelTextStyle: TextStyle = TextStyle(
+        color = Color.Unspecified,
+        fontSize = 10.sp,
+        fontWeight = FontWeight.Light,
+        textAlign = TextAlign.Center
+    )
 
 )
 

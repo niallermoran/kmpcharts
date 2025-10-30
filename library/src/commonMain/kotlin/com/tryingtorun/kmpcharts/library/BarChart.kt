@@ -207,11 +207,11 @@ fun BarChart(
 
                                     val label = config.labelFormatter.invoke(
                                         index,
-                                        data[index].xValue,
-                                        data[index].yValue
+                                        data[index]
                                     )
 
                                     drawText(
+                                        style = config.labelTextStyle,
                                         textMeasurer = textMeasurer,
                                         text = label,
                                         topLeft = Offset(
