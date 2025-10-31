@@ -287,7 +287,7 @@ fun BarChart(
                                 }
                             }
 
-                            if (config.chartConfig.rangeRectangleConfig.display) {
+                            if (config.chartConfig.rangeRectangleConfig != null ) {
 
                                 val yTop = ChartHelper.calculateValueYOffSet(
                                     config = config.chartConfig,
@@ -357,7 +357,7 @@ fun BarChart(
                                 )
                             }
 
-                            if (config.chartConfig.crossHairConfig.lineStyle.display) {
+                            if (config.chartConfig.crossHairConfig != null && config.chartConfig.crossHairConfig.lineStyle.display) {
                                 CrossHairs(
                                     config = config.chartConfig,
                                     coordinate = selectedCoordinate
