@@ -35,6 +35,11 @@ data class DataPointPlotCoordinates(
 data class AxisConfig(
 
     /**
+     * Default color used for lines and text
+     */
+    val color: Color,
+
+    /**
      * Whether or not to display the axis, ticks and labels. If false, nothing will be drawn for the axis. Must be true to show ticks and labels
      */
     val display: Boolean = true,
@@ -48,12 +53,16 @@ data class AxisConfig(
     /**
      * The style for the axis
      */
-    val lineStyle: LineStyle,
+    val lineStyle: LineStyle = LineStyle(
+        color = color,
+    ),
 
     /**
      * The style for the grid lines
      */
-    val gridLineStyle: LineStyle,
+    val gridLineStyle: LineStyle = LineStyle(
+        color = color,
+    ),
 
     /**
      * Whether or not to show ticks for each point on the axis
@@ -73,7 +82,9 @@ data class AxisConfig(
     /**
      * The style of the labels
      */
-    val labelStyle: TextStyle = TextStyle(),
+    val labelStyle: TextStyle = TextStyle(
+        color = color
+    ),
 
     /**
      * The padding around the labels
@@ -159,7 +170,7 @@ data class ChartDimensions(
     val plotAreaWidthPixels: Float,
     val bottomAreaHeightPixels: Float,
     val leftAxisLabelHeightPixels: Float
-){
+) {
     val fullWidth
         get() = leftAreaWidth + plotAreaWidth
 }

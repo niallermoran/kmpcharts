@@ -242,7 +242,7 @@ fun LineChart(
                             }
 
 
-                            if (config.rangeRectangleConfig.display) {
+                            if (config.rangeRectangleConfig != null ) {
 
                                 val yTop = ChartHelper.calculateValueYOffSet(
                                     config = config,
@@ -312,7 +312,7 @@ fun LineChart(
                                 )
                             }
 
-                            if (config.crossHairConfig.lineStyle.display) {
+                            if (config.crossHairConfig != null && config.crossHairConfig.lineStyle.display) {
                                 CrossHairs(
                                     config = config,
                                     coordinate = selectedCoordinate

@@ -210,7 +210,7 @@ object ChartHelper {
             )
 
         val leftLabelMaxWidth =
-            if (config.leftAxisConfig.lineStyle.display && config.leftAxisConfig.display) with(
+            if (config.leftAxisConfig.lineStyle != null && config.leftAxisConfig.lineStyle.display && config.leftAxisConfig.display) with(
                 density
             ) { leftLabelSize.width.toDp() } else 0.dp
         val bottomLabelSize = if (config.bottomAxisConfig.display) calculateBottomAxisLabelSize(
@@ -281,35 +281,37 @@ internal fun CrossHairs(
     config: ChartConfig,
     coordinate: DataPointPlotCoordinates
 ) {
-    Canvas(
-        modifier = Modifier.fillMaxSize().background(Color.Transparent)
-    ) {
-        // vertical cross hair
-        drawLine(
-            start = Offset(coordinate.x, 0f),
-            end = Offset(coordinate.x, size.height),
-            pathEffect = config.crossHairConfig.lineStyle.stroke.pathEffect,
-            cap = config.crossHairConfig.lineStyle.stroke.cap,
-            color = config.crossHairConfig.lineStyle.color,
-            strokeWidth = config.crossHairConfig.lineStyle.stroke.width,
-        )
-
-        // horizontal cross hair
-        drawLine(
-            start = Offset(0f, coordinate.y),
-            end = Offset(size.width, coordinate.y),
-            pathEffect = config.crossHairConfig.lineStyle.stroke.pathEffect,
-            cap = config.crossHairConfig.lineStyle.stroke.cap,
-            color = config.crossHairConfig.lineStyle.color,
-            strokeWidth = config.crossHairConfig.lineStyle.stroke.width,
-        )
-
-        if (config.crossHairConfig.showCircle) {
-            drawCircle(
-                color = config.crossHairConfig.circleColor,
-                radius = config.crossHairConfig.circleRadius,
-                center = Offset(coordinate.x, coordinate.y)
+    if( config.crossHairConfig != null ) {
+        Canvas(
+            modifier = Modifier.fillMaxSize().background(Color.Transparent)
+        ) {
+            // vertical cross hair
+            drawLine(
+                start = Offset(coordinate.x, 0f),
+                end = Offset(coordinate.x, size.height),
+                pathEffect = config.crossHairConfig.lineStyle.stroke.pathEffect,
+                cap = config.crossHairConfig.lineStyle.stroke.cap,
+                color = config.crossHairConfig.lineStyle.color,
+                strokeWidth = config.crossHairConfig.lineStyle.stroke.width,
             )
+
+            // horizontal cross hair
+            drawLine(
+                start = Offset(0f, coordinate.y),
+                end = Offset(size.width, coordinate.y),
+                pathEffect = config.crossHairConfig.lineStyle.stroke.pathEffect,
+                cap = config.crossHairConfig.lineStyle.stroke.cap,
+                color = config.crossHairConfig.lineStyle.color,
+                strokeWidth = config.crossHairConfig.lineStyle.stroke.width,
+            )
+
+            if (config.crossHairConfig.showCircle) {
+                drawCircle(
+                    color = config.crossHairConfig.circleColor,
+                    radius = config.crossHairConfig.circleRadius,
+                    center = Offset(coordinate.x, coordinate.y)
+                )
+            }
         }
     }
 }
@@ -325,49 +327,51 @@ internal fun PopupBox(
     chartDimensions: ChartDimensions,
     coordinate: DataPointPlotCoordinates,
 ) {
-    // get the x position of the box as longs as x + width of box doesn't overflow the chart
-    var x = coordinate.x
-    if (x + config.popupConfig.width.toPx(density) > chartDimensions.fullWidth.toPx(density))
-        x = chartDimensions.fullWidth.toPx(density) - config.popupConfig.width.toPx(density)
+    if(config.popupConfig != null) {
+        // get the x position of the box as longs as x + width of box doesn't overflow the chart
+        var x = coordinate.x
+        if (x + config.popupConfig.width.toPx(density) > chartDimensions.fullWidth.toPx(density))
+            x = chartDimensions.fullWidth.toPx(density) - config.popupConfig.width.toPx(density)
 
-    Row(modifier = Modifier.fillMaxSize()) {
+        Row(modifier = Modifier.fillMaxSize()) {
 
-        Spacer(
-            modifier = Modifier.width(x.toDp(density))
-        )
+            Spacer(
+                modifier = Modifier.width(x.toDp(density))
+            )
 
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(config.popupConfig.cornerRadius))
-                .background(config.popupConfig.color)
-                .width(config.popupConfig.width)
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(config.popupConfig.cornerRadius))
+                    .background(config.popupConfig.backgroundBrush)
+                    .width(config.popupConfig.width)
 
-        )
-        {
-            Column(
-                modifier = Modifier.padding(12.dp),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = config.popupConfig.valueFormatter(data.yValue),
-                    style = TextStyle(
-                        color = config.popupConfig.valueTextColor,
-                        fontSize = config.popupConfig.valueFontSize
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Visible
-                )
-                Text(
-                    text = data.summary,
-                    style = TextStyle(
-                        color = config.popupConfig.summaryTextColor,
-                        fontSize = config.popupConfig.summaryTextFontSize
-                    ),
-                    overflow = TextOverflow.Visible
-                )
+            )
+            {
+                Column(
+                    modifier = Modifier.padding(12.dp),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = config.popupConfig.valueFormatter(data.yValue),
+                        style = TextStyle(
+                            color = config.popupConfig.valueTextColor,
+                            fontSize = config.popupConfig.valueFontSize
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Visible
+                    )
+                    Text(
+                        text = data.summary,
+                        style = TextStyle(
+                            color = config.popupConfig.summaryTextColor,
+                            fontSize = config.popupConfig.summaryTextFontSize
+                        ),
+                        overflow = TextOverflow.Visible
+                    )
+                }
             }
-        }
 
+        }
     }
 }
 
@@ -398,7 +402,7 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
     /**
      * Draw axis line
      */
-    if (config.leftAxisConfig.lineStyle.display) {
+    if (config.leftAxisConfig.lineStyle != null && config.leftAxisConfig.lineStyle.display) {
         drawLine(
             color = config.leftAxisConfig.lineStyle.color,
             start = Offset(size.width, 0f),
@@ -426,7 +430,7 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
 
 
         // draw the tick line
-        if (config.leftAxisConfig.showTicks) {
+        if (config.leftAxisConfig.showTicks && config.leftAxisConfig.lineStyle != null) {
             drawLine(
                 color = config.leftAxisConfig.lineStyle.color,
                 start = Offset(xStart, y),
@@ -486,7 +490,7 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
     /**
      * Draw the axis line
      */
-    if (config.bottomAxisConfig.lineStyle.display) {
+    if ( config.bottomAxisConfig.lineStyle != null && config.bottomAxisConfig.lineStyle.display) {
         drawLine(
             color = config.bottomAxisConfig.lineStyle.color,
             strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width,

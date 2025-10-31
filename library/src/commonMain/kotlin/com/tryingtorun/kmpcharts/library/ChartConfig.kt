@@ -1,5 +1,6 @@
 package com.tryingtorun.kmpcharts.library
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
@@ -18,19 +19,10 @@ import androidx.compose.ui.unit.sp
 data class ChartConfig(
 
     /**
-     * The configuration for the popup rectangle
+     * The default color to use for all line and text configs. Can be overriden by defined axis styles
      */
-    val popupConfig: PopupConfig = PopupConfig(),
+    val defaultAxisTextAndLineColor: Color,
 
-    /**
-     * The configuration for the range rectangle
-     */
-    val rangeRectangleConfig: RangeRectangleConfig = RangeRectangleConfig(),
-
-    /**
-     * The configuration for the left axis
-     */
-    val leftAxisConfig: AxisConfig,
 
     /**
      * The configuration for the bottom axis
@@ -50,7 +42,13 @@ data class ChartConfig(
     /**
      * The configuration for the cross hair
      */
-    val crossHairConfig: CrossHairConfig = CrossHairConfig(),
+    val crossHairConfig: CrossHairConfig = CrossHairConfig(
+        lineStyle = LineStyle(
+            display = true,
+            color = defaultAxisTextAndLineColor
+        )
+    ),
+
 
     /**
      * The method to use to draw ticks and labels on the bottom axis
@@ -60,7 +58,25 @@ data class ChartConfig(
     /**
      * The horizontal guide lines to draw on the chart
      */
-    val horizontalGuideLines: List<HorizontalGuideLineConfig> = emptyList()
+    val horizontalGuideLines: List<HorizontalGuideLineConfig> = emptyList(),
+
+    /**
+     * The configuration for the left axis
+     */
+    val leftAxisConfig: AxisConfig = AxisConfig(color = defaultAxisTextAndLineColor),
+
+
+    /**
+     * The configuration for the popup rectangle
+     */
+    val popupConfig: PopupConfig?= null,
+
+
+
+    /**
+     * The configuration for the range rectangle
+     */
+    val rangeRectangleConfig: RangeRectangleConfig? = null
 )
 
 /**
@@ -75,14 +91,11 @@ enum class BottomAxisTicksAndLabelsDrawMethod {
  * Configure a rectangle to be drawn on the plot area to demonstrate a range
  */
 data class RangeRectangleConfig(
-
-    val display: Boolean = false,
     val minY: Float = 0f,
     val maxY: Float = 0f,
     val color: Color = Color.Green.copy(alpha = 0.6f),
     val label: String = "",
     val labelStyle: TextStyle = TextStyle(
-        color = Color.Black,
         fontSize = 14.sp,
         fontWeight = FontWeight.Bold,
         textAlign = TextAlign.Center
@@ -95,7 +108,6 @@ data class RangeRectangleConfig(
 }
 
 data class HorizontalGuideLineConfig(
-    val display: Boolean = false,
     val yValue: Float = 0f,
     val color: Color = Color.Green,
     val label: String = "Horizontal Guide Line",
@@ -111,12 +123,7 @@ data class HorizontalGuideLineConfig(
         join = StrokeJoin.Round,
         pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
     ),
-    val labelStyle: TextStyle = TextStyle(
-        color = Color.Black,
-        fontSize = 14.sp,
-        fontWeight = FontWeight.Bold,
-        textAlign = TextAlign.Center
-    ),
+    val labelStyle: TextStyle,
     val labelPosition: LabelPosition = LabelPosition.CENTER_ABOVE
 ) {
     enum class LabelPosition {
@@ -127,7 +134,9 @@ data class HorizontalGuideLineConfig(
 
 data class PopupConfig(
 
+    val backgroundBrush: Brush = SolidColor(Color.Yellow.copy(0.8f)),
     val valueTextColor: Color = Color.Black,
+    val summaryTextColor: Color = Color.Black,
 
     /**
      * The formatter to use to display values on the popup
@@ -138,9 +147,6 @@ data class PopupConfig(
      * The color of the left axis
      */
     val valueFontSize: TextUnit = 22.sp,
-
-
-    val summaryTextColor: Color = Color.Black,
 
     /**
      * The font size of the summary text
@@ -156,8 +162,6 @@ data class PopupConfig(
      * The corner radius of the popup
      */
     val cornerRadius: Dp = 10.dp,
-
-    val color: Brush = SolidColor(Color.Yellow.copy(0.8f)),
 )
 
 
@@ -166,9 +170,6 @@ data class PopupConfig(
  */
 data class LineChartConfig(
 
-    /**
-     * The chart configuration
-     */
     val chartConfig: ChartConfig,
 
     /**
@@ -204,11 +205,7 @@ data class LineChartConfig(
  */
 data class BarChartConfig(
 
-    /**
-     * The chart configuration
-     */
     val chartConfig: ChartConfig,
-
     /**
      * The width of each bar compared to the space available
      */
@@ -241,7 +238,6 @@ data class BarChartConfig(
      * The style of the labels
      */
     val labelTextStyle: TextStyle = TextStyle(
-        color = Color.Unspecified,
         fontSize = 10.sp,
         fontWeight = FontWeight.Light,
         textAlign = TextAlign.Center
@@ -251,15 +247,7 @@ data class BarChartConfig(
 
 
 data class CrossHairConfig(
-    val lineStyle: LineStyle = LineStyle(
-        color = Color.LightGray,
-        stroke = Stroke(
-            width = 2f,
-            cap = StrokeCap.Round,
-            join = StrokeJoin.Round,
-            pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-        )
-    ),
+    val lineStyle: LineStyle,
     val showHorizontalLine: Boolean = true,
     val showVerticalLine: Boolean = true,
     val showCircle: Boolean = true,
