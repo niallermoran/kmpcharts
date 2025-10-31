@@ -156,7 +156,7 @@ data class PopupConfig(
     /**
      * The maximum height the popup will take up, wrapping the summary text
      */
-    val width: Dp = 200.dp,
+    val width: Dp = 100.dp,
 
     /**
      * The corner radius of the popup
