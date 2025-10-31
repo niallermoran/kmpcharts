@@ -180,6 +180,68 @@ fun LineChart(
                                 chartDimensions = chartDimensions
                             )
 
+                            if (config.horizontalGuideLines.isNotEmpty()) {
+                                config.horizontalGuideLines.forEach { guideLineConfig ->
+
+                                    val y = ChartHelper.calculateValueYOffSet(
+                                        config = config,
+                                        data = data,
+                                        chartDimensions = chartDimensions,
+                                        value = guideLineConfig.yValue
+                                    )
+
+                                    drawLine(
+                                        color = guideLineConfig.color,
+                                        start = Offset(
+                                            x = chartDimensions.leftAreaWidthPixels,
+                                            y = y
+                                        ),
+                                        end = Offset(
+                                            x = chartDimensions.leftAreaWidthPixels + chartDimensions.plotAreaWidthPixels,
+                                            y = y
+                                        ),
+                                        strokeWidth = guideLineConfig.stroke.width,
+                                        pathEffect = guideLineConfig.stroke.pathEffect
+                                    )
+
+                                    // position label
+                                    val labelSize = textMeasurer.measure(text=guideLineConfig.label, style = guideLineConfig.labelStyle).size
+                                    val padding = with(density){ guideLineConfig.padding.toPx() }
+
+                                    val xLabel = when(guideLineConfig.labelPosition){
+                                        HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER -> {
+                                            chartDimensions.leftAreaWidthPixels + (chartDimensions.plotAreaWidthPixels / 2) - (labelSize.width / 2)
+                                        }
+                                        HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER -> {
+                                            chartDimensions.leftAreaWidthPixels + padding
+                                        }
+                                        HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER ->{
+                                            chartDimensions.leftAreaWidthPixels + chartDimensions.plotAreaWidthPixels - labelSize.width
+                                        }
+                                    }
+
+                                    val yLabel = when(guideLineConfig.labelPosition){
+                                        HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE -> {
+                                            y - labelSize.height - padding
+                                        }
+                                        HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER -> {
+                                            y + padding
+                                        }
+                                    }
+
+                                    drawText(
+                                        textMeasurer = textMeasurer,
+                                        text = guideLineConfig.label,
+                                        style = guideLineConfig.labelStyle,
+                                        topLeft = Offset(
+                                            x = xLabel,
+                                            y = yLabel
+                                        )
+                                    )
+                                }
+                            }
+
+
                             if (config.rangeRectangleConfig.display) {
 
                                 val yTop = ChartHelper.calculateValueYOffSet(

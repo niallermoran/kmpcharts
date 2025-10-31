@@ -25,6 +25,7 @@ import com.tryingtorun.kmpcharts.library.BarChart
 import com.tryingtorun.kmpcharts.library.BarChartConfig
 import com.tryingtorun.kmpcharts.library.BottomAxisTicksAndLabelsDrawMethod
 import com.tryingtorun.kmpcharts.library.ChartConfig
+import com.tryingtorun.kmpcharts.library.HorizontalGuideLineConfig
 import com.tryingtorun.kmpcharts.library.LineChart
 import com.tryingtorun.kmpcharts.library.LineChartConfig
 import com.tryingtorun.kmpcharts.library.LineStyle
@@ -37,13 +38,14 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.math.log
+import kotlin.math.min
 import kotlin.random.Random
 
 
 @Composable
 @Preview
 fun App() {
-
 
     MaterialTheme {
 
@@ -74,8 +76,13 @@ fun App() {
                 Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
 
 
+
                     val data = Sample.irelandMonthlyTemperatureData
+                    val averageTemp = Sample.irelandMonthlyTemperatureData.sumOf { it.yValue } / data.size
                     val max = data.maxOf { it.yValue }
+                    val min = data.minOf { it.yValue }
+
+
 
                     val brushes = data.map { it ->
                         val red = Random.nextFloat()
@@ -96,8 +103,27 @@ fun App() {
                             },
                             barFillBrushes = brushes,
                             chartConfig = ChartConfig(
+                                horizontalGuideLines = listOf(
+                                    HorizontalGuideLineConfig(
+                                        label = "Avg: ${averageTemp.toInt()} ℃",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE,
+                                        yValue = averageTemp.toFloat()
+                                    ),
+                                    HorizontalGuideLineConfig(
+                                        label = "Min: ${min.toInt()} ℃",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE,
+                                        color = Color.Blue,
+                                        yValue = min.toFloat()
+                                    ),
+                                    HorizontalGuideLineConfig(
+                                        label = "Max: ${max.toInt()} ℃",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE,
+                                        color = Color.Red   ,
+                                        yValue = max.toFloat()
+                                    )
+                                ),
                                 rangeRectangleConfig = RangeRectangleConfig(
-                                    display = true,
+                                    display = false,
                                     minY = 10f,
                                     maxY = 18f,
                                     label = "Grass Growth Range",
@@ -152,10 +178,34 @@ fun App() {
 
                     val data = Sample.bitcoinWeekly2024
 
+                    val avg = data.sumOf { it.yValue } / data.size
+                    val min = data.minOf { it.yValue }
+                    val max = data.maxOf { it.yValue }
+
+
                     LineChart(
                         data = data,
                         lineChartConfig = LineChartConfig(
                             chartConfig = ChartConfig(
+                                horizontalGuideLines = listOf(
+                                    HorizontalGuideLineConfig(
+                                        label = "Avg: $${avg.toInt()}",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE,
+                                        yValue = avg.toFloat()
+                                    ),
+                                    HorizontalGuideLineConfig(
+                                        label = "Min: $${min.toInt()}",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE,
+                                        color = Color.Blue,
+                                        yValue = min.toFloat()
+                                    ),
+                                    HorizontalGuideLineConfig(
+                                        label = "Max: $${max.toInt()}",
+                                        labelPosition = HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER,
+                                        color = Color.Red   ,
+                                        yValue = max.toFloat()
+                                    )
+                                ),
                                 bottomAxisMethod = BottomAxisTicksAndLabelsDrawMethod.DIVIDE_EQUALLY,
                                 bottomAxisConfig = AxisConfig(
                                     display = true,
