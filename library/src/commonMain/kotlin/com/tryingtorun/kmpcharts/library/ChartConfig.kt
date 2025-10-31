@@ -47,7 +47,6 @@ data class ChartConfig(
      */
     val rightGutterWidth: Dp = 0.dp,
 
-
     /**
      * The configuration for the cross hair
      */
@@ -57,6 +56,11 @@ data class ChartConfig(
      * The method to use to draw ticks and labels on the bottom axis
      */
     val bottomAxisMethod: BottomAxisTicksAndLabelsDrawMethod = BottomAxisTicksAndLabelsDrawMethod.MATCH_POINT,
+
+    /**
+     * The horizontal guide lines to draw on the chart
+     */
+    val horizontalGuideLines: List<HorizontalGuideLineConfig> = emptyList()
 )
 
 /**
@@ -88,7 +92,36 @@ data class RangeRectangleConfig(
     enum class LabelPosition {
         CENTER, TOP, BOTTOM
     }
+}
 
+data class HorizontalGuideLineConfig(
+    val display: Boolean = false,
+    val yValue: Float = 0f,
+    val color: Color = Color.Green,
+    val label: String = "Horizontal Guide Line",
+
+    /**
+     * Padding between label and line
+     */
+    val padding: Dp = 2.dp,
+
+    val stroke: Stroke = Stroke(
+        width = 10f,
+        cap = StrokeCap.Round,
+        join = StrokeJoin.Round,
+        pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+    ),
+    val labelStyle: TextStyle = TextStyle(
+        color = Color.Black,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.Bold,
+        textAlign = TextAlign.Center
+    ),
+    val labelPosition: LabelPosition = LabelPosition.CENTER_ABOVE
+) {
+    enum class LabelPosition {
+        CENTER_ABOVE, CENTER_UNDER, LEFT_ABOVE, LEFT_UNDER, RIGHT_ABOVE, RIGHT_UNDER
+    }
 }
 
 
