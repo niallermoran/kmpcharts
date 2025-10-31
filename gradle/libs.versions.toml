@@ -1,5 +1,5 @@
 [versions]
-kmpcharts = "0.11.0-alpha"
+kmpcharts = "0.11.1-alpha"
 agp = "8.13.0"
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -8,7 +8,7 @@ androidx-activity = "1.11.0"
 androidx-lifecycle = "2.9.5"
 composeMultiplatform = "1.9.2"
 kotlin = "2.2.21"
-kotlinStdlib = "2.2.20"
+kotlinStdlib = "2.2.21"
 kotlinxDatetime = "0.7.1"
 
 [libraries]
