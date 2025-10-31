@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -330,6 +331,7 @@ internal fun PopupBox(
     if(config.popupConfig != null) {
         // get the x position of the box as longs as x + width of box doesn't overflow the chart
         var x = coordinate.x
+
         if (x + config.popupConfig.width.toPx(density) > chartDimensions.fullWidth.toPx(density))
             x = chartDimensions.fullWidth.toPx(density) - config.popupConfig.width.toPx(density)
 
@@ -344,7 +346,6 @@ internal fun PopupBox(
                     .clip(RoundedCornerShape(config.popupConfig.cornerRadius))
                     .background(config.popupConfig.backgroundBrush)
                     .width(config.popupConfig.width)
-
             )
             {
                 Column(
@@ -358,6 +359,7 @@ internal fun PopupBox(
                             fontSize = config.popupConfig.valueFontSize
                         ),
                         maxLines = 1,
+                        minLines = 1,
                         overflow = TextOverflow.Visible
                     )
                     Text(
@@ -366,7 +368,8 @@ internal fun PopupBox(
                             color = config.popupConfig.summaryTextColor,
                             fontSize = config.popupConfig.summaryTextFontSize
                         ),
-                        overflow = TextOverflow.Visible
+                        overflow = TextOverflow.Visible,
+                        minLines = 1,
                     )
                 }
             }

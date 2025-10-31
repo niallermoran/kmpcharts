@@ -102,6 +102,13 @@ fun App() {
                             },
                             barFillBrushes = brushes,
                             chartConfig = ChartConfig(
+                                popupConfig = PopupConfig(
+                                    valueFormatter = {
+                                        "${it.toInt()}°C"
+                                    },
+                                    valueTextColor = MaterialTheme.colorScheme.onSurface,
+                                    summaryTextColor = MaterialTheme.colorScheme.onSurface,
+                                ),
                                 defaultAxisTextAndLineColor = MaterialTheme.colorScheme.onSurface,
                                 horizontalGuideLines = listOf(
                                     HorizontalGuideLineConfig(
