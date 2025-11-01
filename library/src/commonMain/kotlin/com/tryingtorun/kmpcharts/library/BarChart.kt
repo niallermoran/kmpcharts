@@ -25,6 +25,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.modifier.ModifierLocalModifierNode
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.drawText
@@ -41,7 +42,7 @@ import androidx.compose.ui.unit.dp
 fun BarChart(
     data: List<ChartDataPoint>,
     modifier: Modifier = Modifier,
-    config: BarChartConfig
+    config: BarChartConfig? = null
 ) {
 
     val density = LocalDensity.current
@@ -64,7 +65,7 @@ fun BarChart(
                 val chartDimensions = ChartHelper.calculateChartDimensions(
                     density = density,
                     data = data,
-                    config = config.chartConfig,
+                    config = config?.chartConfig,
                     textMeasurer = textMeasurer,
                     width = width,
                     height = height
@@ -79,7 +80,7 @@ fun BarChart(
 
                 val coordinates = ChartHelper.getDataPointCoordinates(
                     chartDimensions = chartDimensions,
-                    config = config.chartConfig,
+                    config = config?.chartConfig,
                     data = data,
                     density = density,
                     barWidth = barDimensions.barWidth
@@ -99,13 +100,15 @@ fun BarChart(
                             modifier = Modifier.fillMaxSize()
                         ) {
 
-                            drawLeftAxisLabelsAndTicks(
-                                density = density,
-                                textMeasurer = textMeasurer,
-                                config = config.chartConfig,
-                                chartDimensions = chartDimensions,
-                                data = data
-                            )
+                            if( config != null ) {
+                                drawLeftAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config.chartConfig,
+                                    chartDimensions = chartDimensions,
+                                    data = data
+                                )
+                            }
                         }
                     }
 
@@ -124,16 +127,17 @@ fun BarChart(
                             }
                     ) {
 
-                        Canvas(modifier = Modifier.fillMaxSize()) {
+                        if( config != null ) {
+                            Canvas(modifier = Modifier.fillMaxSize()) {
 
-                            drawBottomAxisLabelsAndTicks(
-                                density = density,
-                                textMeasurer = textMeasurer,
-                                config = config.chartConfig,
-                                chartDimensions = chartDimensions,
-                                coordinates = coordinates
-                            )
-
+                                drawBottomAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config.chartConfig,
+                                    chartDimensions = chartDimensions,
+                                    coordinates = coordinates
+                                )
+                            }
                         }
                     }
 
@@ -162,26 +166,30 @@ fun BarChart(
 
                         }
 
+                        var modifier = Modifier.fillMaxSize()
+                        if( config?.chartConfig?.popupConfig != null  )
+                        {
+                            modifier = modifier.draggable(
+                                state = draggableState,
+                                orientation = Orientation.Horizontal,
+                                onDragStarted = { offset ->
+                                    dragPosition = offset
+                                },
+                                onDragStopped = {
+                                    showPopup = false
+                                    selectedIndex = null
+                                }
+                            )
+                        }
+
                         Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .draggable(
-                                    state = draggableState,
-                                    orientation = Orientation.Horizontal,
-                                    onDragStarted = { offset ->
-                                        dragPosition = offset
-                                    },
-                                    onDragStopped = {
-                                        showPopup = false
-                                        selectedIndex = null
-                                    }
-                                )
+                            modifier = modifier
                         ) {
                             coordinates.forEachIndexed { index, coordinate ->
 
                                 val brush =
-                                    if (config.barFillBrushes.isNullOrEmpty() || index >= config.barFillBrushes.size) {
-                                        config.barFillBrush
+                                    if (config?.barFillBrushes.isNullOrEmpty() || index >= config.barFillBrushes.size) {
+                                        config?.barFillBrush ?: SolidColor(Color.Blue)
                                     } else {
                                         config.barFillBrushes[index]
                                     }
@@ -197,13 +205,13 @@ fun BarChart(
                                         size.height - coordinate.y
                                     ),
                                     cornerRadius = CornerRadius(
-                                        config.barCornerRadius,
-                                        config.barCornerRadius
+                                        config?.barCornerRadius ?: 10f,
+                                        config?.barCornerRadius ?: 10f
                                     )
                                 )
 
                                 // place text label if formatter is provided
-                                if (config.labelFormatter != null) {
+                                if (config?.labelFormatter != null) {
 
                                     val label = config.labelFormatter.invoke(
                                         index,
@@ -225,11 +233,11 @@ fun BarChart(
 
                             }
 
-                            if (config.chartConfig.horizontalGuideLines.isNotEmpty()) {
+                            if (!config?.chartConfig?.horizontalGuideLines.isNullOrEmpty()) {
 
                                 config.chartConfig.horizontalGuideLines.forEach { guideLineConfig ->
 
-                                    val  y = ChartHelper.calculateValueYOffSet(
+                                    val y = ChartHelper.calculateValueYOffSet(
                                         config = config.chartConfig,
                                         data = data,
                                         chartDimensions = chartDimensions,
@@ -251,25 +259,31 @@ fun BarChart(
                                     )
 
                                     // position label
-                                    val labelSize = textMeasurer.measure(text=guideLineConfig.label, style = guideLineConfig.labelStyle).size
-                                    val padding = with(density){ guideLineConfig.padding.toPx() }
+                                    val labelSize = textMeasurer.measure(
+                                        text = guideLineConfig.label,
+                                        style = guideLineConfig.labelStyle
+                                    ).size
+                                    val padding = with(density) { guideLineConfig.padding.toPx() }
 
-                                    val xLabel = when(guideLineConfig.labelPosition){
+                                    val xLabel = when (guideLineConfig.labelPosition) {
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + (chartDimensions.plotAreaWidthPixels / 2) - (labelSize.width / 2)
                                         }
+
                                         HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + padding
                                         }
-                                        HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER ->{
+
+                                        HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + chartDimensions.plotAreaWidthPixels - labelSize.width
                                         }
                                     }
 
-                                    val yLabel = when(guideLineConfig.labelPosition){
+                                    val yLabel = when (guideLineConfig.labelPosition) {
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE -> {
                                             y - labelSize.height - padding
                                         }
+
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER -> {
                                             y + padding
                                         }
@@ -287,7 +301,7 @@ fun BarChart(
                                 }
                             }
 
-                            if (config.chartConfig.rangeRectangleConfig != null ) {
+                            if (config?.chartConfig?.rangeRectangleConfig != null) {
 
                                 val yTop = ChartHelper.calculateValueYOffSet(
                                     config = config.chartConfig,
@@ -347,7 +361,7 @@ fun BarChart(
                             val selectedData = data[selectedIndex!!]
                             val selectedCoordinate = coordinates[selectedIndex!!]
 
-                            if (showPopup) {
+                            if ( config != null && showPopup) {
                                 PopupBox(
                                     data = selectedData,
                                     config = config.chartConfig,
@@ -357,7 +371,7 @@ fun BarChart(
                                 )
                             }
 
-                            if (config.chartConfig.crossHairConfig.lineStyle.display) {
+                            if (config?.chartConfig?.crossHairConfig != null && config.chartConfig.crossHairConfig.lineStyle.display) {
                                 CrossHairs(
                                     config = config.chartConfig,
                                     coordinate = selectedCoordinate
