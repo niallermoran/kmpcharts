@@ -19,15 +19,14 @@ import androidx.compose.ui.unit.sp
 data class ChartConfig(
 
     /**
-     * The default color to use for all line and text configs. Can be overriden by defined axis styles
+     * The default color to use for all line and text configs. Can be overridden by defined axis styles
      */
     val defaultAxisTextAndLineColor: Color,
 
-
     /**
-     * The configuration for the bottom axis
+     * The configuration for the bottom axis. If null not bottom axis, ticks or labels will be shown
      */
-    val bottomAxisConfig: AxisConfig,
+    val bottomAxisConfig: AxisConfig? = null,
 
     /**
      * The left gutter provides a gap between the start of the chart and the left axis
@@ -42,12 +41,7 @@ data class ChartConfig(
     /**
      * The configuration for the cross hair
      */
-    val crossHairConfig: CrossHairConfig = CrossHairConfig(
-        lineStyle = LineStyle(
-            display = true,
-            color = defaultAxisTextAndLineColor
-        )
-    ),
+    val crossHairConfig: CrossHairConfig? = null,
 
 
     /**
@@ -63,7 +57,7 @@ data class ChartConfig(
     /**
      * The configuration for the left axis
      */
-    val leftAxisConfig: AxisConfig = AxisConfig(color = defaultAxisTextAndLineColor),
+    val leftAxisConfig: AxisConfig? = null,
 
 
     /**

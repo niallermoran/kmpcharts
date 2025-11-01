@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,13 +25,18 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 
@@ -42,11 +48,11 @@ import androidx.compose.ui.unit.dp
 fun LineChart(
     data: List<ChartDataPoint>,
     modifier: Modifier = Modifier,
-    lineChartConfig: LineChartConfig
+    lineChartConfig: LineChartConfig? = null
 ) {
     val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current
-    val config = lineChartConfig.chartConfig
+    val config = lineChartConfig?.chartConfig
     var selectedIndex by remember { mutableStateOf<Int?>(null) } // the closest data point to where the drag gesture is
     var previousSelectedIndex by remember { mutableStateOf<Int?>(null) } // the closest data point to where the drag gesture is
     var dragPosition by remember { mutableStateOf(Offset.Zero) } // the current offset from origin
@@ -81,57 +87,16 @@ fun LineChart(
 
                 Box(modifier = Modifier.fillMaxSize()) {
 
-                    if (config.leftAxisConfig.display) {
+                    LeftAxis(config, chartDimensions, density, textMeasurer, data)
 
-                        /**
-                         * Left area axis, ticks and labels
-                         */
-                        Box(
-                            modifier = Modifier
-                                .width(chartDimensions.leftAreaWidth)
-                        ) {
-                            Canvas(
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-
-                                drawLeftAxisLabelsAndTicks(
-                                    density = density,
-                                    textMeasurer = textMeasurer,
-                                    config = config,
-                                    chartDimensions = chartDimensions,
-                                    data = data
-                                )
-                            }
-                        }
-                    }
-
-                    if (config.bottomAxisConfig.display) {
-                        /**
-                         * Bottom area axis, ticks and labels
-                         */
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(chartDimensions.bottomAreaHeight)
-                                .offset {
-                                    IntOffset(
-                                        0,
-                                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
-                                    )
-                                }
-                        ) {
-
-                            Canvas(modifier = Modifier.fillMaxSize()) {
-                                drawBottomAxisLabelsAndTicks(
-                                    density = density,
-                                    textMeasurer = textMeasurer,
-                                    config = config,
-                                    chartDimensions = chartDimensions,
-                                    coordinates = coordinates
-                                )
-                            }
-                        }
-                    }
+                    BottomAxis(
+                        config,
+                        chartDimensions,
+                        heightPixels,
+                        density,
+                        textMeasurer,
+                        coordinates
+                    )
 
                     // The main chart drawing area
                     Box(
@@ -159,20 +124,24 @@ fun LineChart(
 
                         }
 
+                        var modifier = Modifier.fillMaxSize()
+                        if( config?.popupConfig != null  )
+                        {
+                            modifier = modifier.draggable(
+                                state = draggableState,
+                                orientation = Orientation.Horizontal,
+                                onDragStarted = { offset ->
+                                    dragPosition = offset
+                                },
+                                onDragStopped = {
+                                    showPopup = false
+                                    selectedIndex = null
+                                }
+                            )
+                        }
+
                         Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .draggable(
-                                    state = draggableState,
-                                    orientation = Orientation.Horizontal,
-                                    onDragStarted = { offset ->
-                                        dragPosition = offset
-                                    },
-                                    onDragStopped = {
-                                        showPopup = false
-                                        selectedIndex = null
-                                    }
-                                )
+                            modifier = modifier
                         ) {
                             drawChartLine(
                                 coordinates = coordinates,
@@ -180,7 +149,8 @@ fun LineChart(
                                 chartDimensions = chartDimensions
                             )
 
-                            if (config.horizontalGuideLines.isNotEmpty()) {
+                            if (!config?.horizontalGuideLines.isNullOrEmpty()) {
+
                                 config.horizontalGuideLines.forEach { guideLineConfig ->
 
                                     val y = ChartHelper.calculateValueYOffSet(
@@ -205,25 +175,31 @@ fun LineChart(
                                     )
 
                                     // position label
-                                    val labelSize = textMeasurer.measure(text=guideLineConfig.label, style = guideLineConfig.labelStyle).size
-                                    val padding = with(density){ guideLineConfig.padding.toPx() }
+                                    val labelSize = textMeasurer.measure(
+                                        text = guideLineConfig.label,
+                                        style = guideLineConfig.labelStyle
+                                    ).size
+                                    val padding = with(density) { guideLineConfig.padding.toPx() }
 
-                                    val xLabel = when(guideLineConfig.labelPosition){
+                                    val xLabel = when (guideLineConfig.labelPosition) {
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + (chartDimensions.plotAreaWidthPixels / 2) - (labelSize.width / 2)
                                         }
+
                                         HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + padding
                                         }
-                                        HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER ->{
+
+                                        HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER -> {
                                             chartDimensions.leftAreaWidthPixels + chartDimensions.plotAreaWidthPixels - labelSize.width
                                         }
                                     }
 
-                                    val yLabel = when(guideLineConfig.labelPosition){
+                                    val yLabel = when (guideLineConfig.labelPosition) {
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_ABOVE, HorizontalGuideLineConfig.LabelPosition.LEFT_ABOVE, HorizontalGuideLineConfig.LabelPosition.RIGHT_ABOVE -> {
                                             y - labelSize.height - padding
                                         }
+
                                         HorizontalGuideLineConfig.LabelPosition.CENTER_UNDER, HorizontalGuideLineConfig.LabelPosition.LEFT_UNDER, HorizontalGuideLineConfig.LabelPosition.RIGHT_UNDER -> {
                                             y + padding
                                         }
@@ -242,7 +218,7 @@ fun LineChart(
                             }
 
 
-                            if (config.rangeRectangleConfig != null ) {
+                            if (config?.rangeRectangleConfig != null) {
 
                                 val yTop = ChartHelper.calculateValueYOffSet(
                                     config = config,
@@ -302,7 +278,7 @@ fun LineChart(
                             val selectedData = data[selectedIndex!!]
                             val selectedCoordinate = coordinates[selectedIndex!!]
 
-                            if (showPopup) {
+                            if (showPopup && config != null) {
                                 PopupBox(
                                     data = selectedData,
                                     config = config,
@@ -312,7 +288,7 @@ fun LineChart(
                                 )
                             }
 
-                            if (config.crossHairConfig != null && config.crossHairConfig.lineStyle.display) {
+                            if (config?.crossHairConfig != null && config.crossHairConfig.lineStyle.display) {
                                 CrossHairs(
                                     config = config,
                                     coordinate = selectedCoordinate
@@ -335,12 +311,83 @@ fun LineChart(
     }
 }
 
+@Composable
+private fun BottomAxis(
+    config: ChartConfig?,
+    chartDimensions: ChartDimensions,
+    heightPixels: Float,
+    density: Density,
+    textMeasurer: TextMeasurer,
+    coordinates: List<DataPointPlotCoordinates>
+) {
+    if (config?.bottomAxisConfig != null) {
+        /**
+         * Bottom area axis, ticks and labels
+         */
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(chartDimensions.bottomAreaHeight)
+                .offset {
+                    IntOffset(
+                        0,
+                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
+                    )
+                }
+        ) {
+
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawBottomAxisLabelsAndTicks(
+                    density = density,
+                    textMeasurer = textMeasurer,
+                    config = config,
+                    chartDimensions = chartDimensions,
+                    coordinates = coordinates
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LeftAxis(
+    config: ChartConfig?,
+    chartDimensions: ChartDimensions,
+    density: Density,
+    textMeasurer: TextMeasurer,
+    data: List<ChartDataPoint>
+) {
+    if (config?.leftAxisConfig != null) {
+
+        /**
+         * Left area axis, ticks and labels
+         */
+        Box(
+            modifier = Modifier
+                .width(chartDimensions.leftAreaWidth)
+        ) {
+            Canvas(
+                modifier = Modifier.fillMaxSize()
+            ) {
+
+                drawLeftAxisLabelsAndTicks(
+                    density = density,
+                    textMeasurer = textMeasurer,
+                    config = config,
+                    chartDimensions = chartDimensions,
+                    data = data
+                )
+            }
+        }
+    }
+}
+
 /**
  * Draws X-axis value labels
  */
 private fun DrawScope.drawChartLine(
     coordinates: List<DataPointPlotCoordinates>,
-    config: LineChartConfig,
+    config: LineChartConfig? = null,
     chartDimensions: ChartDimensions
 ) {
 
@@ -352,7 +399,7 @@ private fun DrawScope.drawChartLine(
         close()
     }
 
-    if (config.fillLine) {
+    if (config?.fillLine == true) {
         drawPath(
             path = filledPath,
             brush = config.fillBrush
@@ -360,11 +407,15 @@ private fun DrawScope.drawChartLine(
     }
 
     // Draw smooth line
-    if (config.lineStyle.display) {
+    if (config == null || config.lineStyle.display) {
         drawPath(
             path = smoothPath,
-            color = config.lineStyle.color,
-            style = config.lineStyle.stroke
+            color = config?.lineStyle?.color ?: Color.Blue,
+            style = config?.lineStyle?.stroke ?: Stroke(
+                width = 2f,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round
+            )
         )
     }
 

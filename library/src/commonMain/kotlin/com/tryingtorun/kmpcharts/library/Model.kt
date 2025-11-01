@@ -40,12 +40,6 @@ data class AxisConfig(
     val color: Color,
 
     /**
-     * Whether or not to display the axis, ticks and labels. If false, nothing will be drawn for the axis. Must be true to show ticks and labels
-     */
-    val display: Boolean = true,
-
-
-    /**
      * The formatter to use to display values on the axis
      */
     val valueFormatter: (Double) -> String = { it.toPrecisionString(2) },
@@ -68,6 +62,7 @@ data class AxisConfig(
      * Whether or not to show ticks for each point on the axis
      */
     val showTicks: Boolean = true,
+
 
     /**
      * Whether or not to show labels for each point on the axis
