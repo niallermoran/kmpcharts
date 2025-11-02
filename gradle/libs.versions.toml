@@ -1,5 +1,5 @@
 [versions]
-kmpcharts = "0.12.1-alpha"
+kmpcharts = "0.13.0-alpha"
 agp = "8.13.0"
 android-compileSdk = "36"
 android-minSdk = "24"

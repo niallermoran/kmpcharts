@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,18 +24,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 
@@ -87,16 +82,57 @@ fun LineChart(
 
                 Box(modifier = Modifier.fillMaxSize()) {
 
-                    LeftAxis(config, chartDimensions, density, textMeasurer, data)
+                    if (config?.leftAxisConfig != null) {
 
-                    BottomAxis(
-                        config,
-                        chartDimensions,
-                        heightPixels,
-                        density,
-                        textMeasurer,
-                        coordinates
-                    )
+                        /**
+                         * Left area axis, ticks and labels
+                         */
+                        Box(
+                            modifier = Modifier
+                                .width(chartDimensions.leftAreaWidth)
+                        ) {
+                            Canvas(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+
+                                drawLeftAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config,
+                                    chartDimensions = chartDimensions,
+                                    data = data
+                                )
+                            }
+                        }
+                    }
+
+                    if (config?.bottomAxisConfig != null) {
+                        /**
+                         * Bottom area axis, ticks and labels
+                         */
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartDimensions.bottomAreaHeight)
+                                .offset {
+                                    IntOffset(
+                                        0,
+                                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
+                                    )
+                                }
+                        ) {
+
+                            Canvas(modifier = Modifier.fillMaxSize()) {
+                                drawBottomAxisLabelsAndTicks(
+                                    density = density,
+                                    textMeasurer = textMeasurer,
+                                    config = config,
+                                    chartDimensions = chartDimensions,
+                                    coordinates = coordinates
+                                )
+                            }
+                        }
+                    }
 
                     // The main chart drawing area
                     Box(
@@ -124,33 +160,29 @@ fun LineChart(
 
                         }
 
-                        var modifier = Modifier.fillMaxSize()
-                        if( config?.popupConfig != null  )
-                        {
-                            modifier = modifier.draggable(
-                                state = draggableState,
-                                orientation = Orientation.Horizontal,
-                                onDragStarted = { offset ->
-                                    dragPosition = offset
-                                },
-                                onDragStopped = {
-                                    showPopup = false
-                                    selectedIndex = null
-                                }
-                            )
-                        }
-
                         Canvas(
-                            modifier = modifier
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .draggable(
+                                    state = draggableState,
+                                    orientation = Orientation.Horizontal,
+                                    onDragStarted = { offset ->
+                                        dragPosition = offset
+                                    },
+                                    onDragStopped = {
+                                        showPopup = false
+                                        selectedIndex = null
+                                    }
+                                )
                         ) {
+
                             drawChartLine(
                                 coordinates = coordinates,
                                 config = lineChartConfig,
                                 chartDimensions = chartDimensions
                             )
 
-                            if (!config?.horizontalGuideLines.isNullOrEmpty()) {
-
+                            if (config?.horizontalGuideLines?.isNotEmpty() == true) {
                                 config.horizontalGuideLines.forEach { guideLineConfig ->
 
                                     val y = ChartHelper.calculateValueYOffSet(
@@ -278,7 +310,7 @@ fun LineChart(
                             val selectedData = data[selectedIndex!!]
                             val selectedCoordinate = coordinates[selectedIndex!!]
 
-                            if (showPopup && config != null) {
+                            if (showPopup && config != null ) {
                                 PopupBox(
                                     data = selectedData,
                                     config = config,
@@ -288,7 +320,7 @@ fun LineChart(
                                 )
                             }
 
-                            if (config?.crossHairConfig != null && config.crossHairConfig.lineStyle.display) {
+                            if (config?.crossHairConfig != null) {
                                 CrossHairs(
                                     config = config,
                                     coordinate = selectedCoordinate
@@ -306,77 +338,6 @@ fun LineChart(
                 contentAlignment = androidx.compose.ui.Alignment.Center
             ) {
                 Text(text = "Not enough data", textAlign = TextAlign.Center)
-            }
-        }
-    }
-}
-
-@Composable
-private fun BottomAxis(
-    config: ChartConfig?,
-    chartDimensions: ChartDimensions,
-    heightPixels: Float,
-    density: Density,
-    textMeasurer: TextMeasurer,
-    coordinates: List<DataPointPlotCoordinates>
-) {
-    if (config?.bottomAxisConfig != null) {
-        /**
-         * Bottom area axis, ticks and labels
-         */
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(chartDimensions.bottomAreaHeight)
-                .offset {
-                    IntOffset(
-                        0,
-                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
-                    )
-                }
-        ) {
-
-            Canvas(modifier = Modifier.fillMaxSize()) {
-                drawBottomAxisLabelsAndTicks(
-                    density = density,
-                    textMeasurer = textMeasurer,
-                    config = config,
-                    chartDimensions = chartDimensions,
-                    coordinates = coordinates
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun LeftAxis(
-    config: ChartConfig?,
-    chartDimensions: ChartDimensions,
-    density: Density,
-    textMeasurer: TextMeasurer,
-    data: List<ChartDataPoint>
-) {
-    if (config?.leftAxisConfig != null) {
-
-        /**
-         * Left area axis, ticks and labels
-         */
-        Box(
-            modifier = Modifier
-                .width(chartDimensions.leftAreaWidth)
-        ) {
-            Canvas(
-                modifier = Modifier.fillMaxSize()
-            ) {
-
-                drawLeftAxisLabelsAndTicks(
-                    density = density,
-                    textMeasurer = textMeasurer,
-                    config = config,
-                    chartDimensions = chartDimensions,
-                    data = data
-                )
             }
         }
     }
@@ -407,17 +368,11 @@ private fun DrawScope.drawChartLine(
     }
 
     // Draw smooth line
-    if (config == null || config.lineStyle.display) {
-        drawPath(
-            path = smoothPath,
-            color = config?.lineStyle?.color ?: Color.Blue,
-            style = config?.lineStyle?.stroke ?: Stroke(
-                width = 2f,
-                cap = StrokeCap.Round,
-                join = StrokeJoin.Round
-            )
-        )
-    }
+    drawPath(
+        path = smoothPath,
+        color = config?.lineStyle?.color ?: defaultLineColor,
+        style = config?.lineStyle?.stroke ?: Stroke(width=10f)
+    )
 
 }
 
