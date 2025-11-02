@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+val defaultLineColor = Color.Gray // default color used that works for both themes
+
 /**
  * Data class representing a single bar in the chart
  */
@@ -35,11 +37,6 @@ data class DataPointPlotCoordinates(
 data class AxisConfig(
 
     /**
-     * Default color used for lines and text
-     */
-    val color: Color,
-
-    /**
      * The formatter to use to display values on the axis
      */
     val valueFormatter: (Double) -> String = { it.toPrecisionString(2) },
@@ -47,27 +44,27 @@ data class AxisConfig(
     /**
      * The style for the axis
      */
-    val lineStyle: LineStyle = LineStyle(
-        color = color,
-    ),
+    val lineStyle: LineStyle = LineStyle(),
 
     /**
      * The style for the grid lines
      */
-    val gridLineStyle: LineStyle = LineStyle(
-        color = color,
-    ),
+    val gridLineStyle: LineStyle = LineStyle(),
 
     /**
      * Whether or not to show ticks for each point on the axis
      */
     val showTicks: Boolean = true,
 
-
     /**
      * Whether or not to show labels for each point on the axis
      */
     val showLabels: Boolean = true,
+
+    /**
+     * Whether or not to show labels for each point on the axis
+     */
+    val showAxisLine: Boolean = true,
 
     /**
      * The length of the ticks
@@ -78,7 +75,7 @@ data class AxisConfig(
      * The style of the labels
      */
     val labelStyle: TextStyle = TextStyle(
-        color = color
+        color = defaultLineColor
     ),
 
     /**
@@ -87,16 +84,9 @@ data class AxisConfig(
     val labelPadding: PaddingValues = PaddingValues(6.dp),
 
     /**
-     * The minimum value is the smallest value to be represented on the axis.
-     * If left null will be automatically calculated from data.
+     * Defines the scale for the axis, if left null will be calculated from the data
      */
-    val minValue: Double? = null,
-
-    /**
-     * The maximum value is the largest value to be represented on the axis
-     * If left null will be automatically calculated from data.
-     */
-    val maxValue: Double? = null,
+    val scale: Scale? = null,
 
     /**
      * The number of labels to show on the axis.
@@ -119,8 +109,7 @@ data class AxisConfig(
 )
 
 data class LineStyle(
-    val display: Boolean = true,
-    val color: Color,
+    val color: Color = defaultLineColor,
     val stroke: Stroke = Stroke(
         width = 2f,
         cap = StrokeCap.Round,

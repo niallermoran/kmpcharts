@@ -114,8 +114,8 @@ object ChartHelper {
         value: Float
     ): Float {
 
-        val minY = config.leftAxisConfig?.minValue ?: data.minOf { it.yValue }
-        val maxY = config.leftAxisConfig?.maxValue ?: data.maxOf { it.yValue }
+        val minY = config.leftAxisConfig?.scale?.min ?: data.minOf { it.yValue }
+        val maxY = config.leftAxisConfig?.scale?.max ?: data.maxOf { it.yValue }
         val yRange = maxY - minY
 
         val plotAreaHeight = chartDimensions.plotAreaHeightPixels
@@ -135,9 +135,9 @@ object ChartHelper {
     ): List<DataPointPlotCoordinates> {
 
         val minX = data.minOf { it.xValue }
-        val minY = config?.leftAxisConfig?.minValue ?: data.minOf { it.yValue }
+        val minY = config?.leftAxisConfig?.scale?.min ?: data.minOf { it.yValue }
         val maxX = data.maxOf { it.xValue }
-        val maxY = config?.leftAxisConfig?.maxValue ?: data.maxOf { it.yValue }
+        val maxY = config?.leftAxisConfig?.scale?.max ?: data.maxOf { it.yValue }
 
         val xRange = maxX - minX
         val yRange = maxY - minY
@@ -184,8 +184,10 @@ object ChartHelper {
          * usableWidth = n * barWidth + (n-1) * spacing
          */
         val barWidth =
-            if (data.size == 1) availableWidth else availableWidth / (data.size + (config?.barWidthFactor ?: 0.8f ) * (data.size - 1))
-        val spacingBetweenBars = if (data.size == 1) 0f else barWidth * (config?.barWidthFactor ?:0.8f)
+            if (data.size == 1) availableWidth else availableWidth / (data.size + (config?.barWidthFactor
+                ?: 0.8f) * (data.size - 1))
+        val spacingBetweenBars =
+            if (data.size == 1) 0f else barWidth * (config?.barWidthFactor ?: 0.8f)
 
         return BarDimensions(
             barWidth = with(density) { barWidth.toDp() },
@@ -221,7 +223,7 @@ object ChartHelper {
             )
 
         val leftLabelMaxWidth = if (config == null) 0.dp else
-            if (config.leftAxisConfig?.lineStyle != null && config.leftAxisConfig.lineStyle.display) with(
+            if (config.leftAxisConfig?.lineStyle != null) with(
                 density
             ) { leftLabelSize.width.toDp() } else 0.dp
 
@@ -416,8 +418,8 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
         val width = size.width
         val height = size.height - chartDimensions.bottomAreaHeightPixels
 
-        val minY = config.leftAxisConfig.minValue ?: data.minOf { it.yValue }
-        val maxY = config.leftAxisConfig.maxValue ?: data.maxOf { it.yValue }
+        val minY = config.leftAxisConfig.scale?.min ?: data.minOf { it.yValue }
+        val maxY = config.leftAxisConfig.scale?.max ?: data.maxOf { it.yValue }
 
         val yRange = maxY - minY
 
@@ -429,15 +431,12 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
         /**
          * Draw axis line
          */
-        if (config.leftAxisConfig.lineStyle != null && config.leftAxisConfig.lineStyle.display) {
-            drawLine(
-                color = config.leftAxisConfig.lineStyle.color,
-                start = Offset(size.width, 0f),
-                end = Offset(size.width, height),
-                strokeWidth = config.leftAxisConfig.lineStyle.stroke.width
-            )
-        }
-
+        drawLine(
+            color = config.leftAxisConfig.lineStyle.color,
+            start = Offset(size.width, 0f),
+            end = Offset(size.width, height),
+            strokeWidth = config.leftAxisConfig.lineStyle.stroke.width
+        )
 
 
         for (i in 1..config.leftAxisConfig.numberOfLabelsToShow) {
@@ -521,14 +520,12 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
         /**
          * Draw the axis line
          */
-        if (config.bottomAxisConfig.lineStyle.display) {
             drawLine(
                 color = config.bottomAxisConfig.lineStyle.color,
                 strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width,
                 start = Offset(x = startX, 0f),
                 end = Offset(size.width, 0f),
             )
-        }
 
         if (config.bottomAxisMethod == BottomAxisTicksAndLabelsDrawMethod.MATCH_POINT) {
 

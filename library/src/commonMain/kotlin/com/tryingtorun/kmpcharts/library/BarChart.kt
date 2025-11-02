@@ -371,7 +371,7 @@ fun BarChart(
                                 )
                             }
 
-                            if (config?.chartConfig?.crossHairConfig != null && config.chartConfig.crossHairConfig.lineStyle.display) {
+                            if (config?.chartConfig?.crossHairConfig != null) {
                                 CrossHairs(
                                     config = config.chartConfig,
                                     coordinate = selectedCoordinate

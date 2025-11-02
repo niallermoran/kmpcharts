@@ -19,11 +19,6 @@ import androidx.compose.ui.unit.sp
 data class ChartConfig(
 
     /**
-     * The default color to use for all line and text configs. Can be overridden by defined axis styles
-     */
-    val defaultAxisTextAndLineColor: Color,
-
-    /**
      * The configuration for the bottom axis. If null not bottom axis, ticks or labels will be shown
      */
     val bottomAxisConfig: AxisConfig? = null,
@@ -65,13 +60,17 @@ data class ChartConfig(
      */
     val popupConfig: PopupConfig?= null,
 
-
-
     /**
      * The configuration for the range rectangle
      */
     val rangeRectangleConfig: RangeRectangleConfig? = null
 )
+
+/**
+ * Defines the scale range for an axis
+ */
+data class Scale( val min: Double, val max: Double)
+
 
 /**
  * Method to use to display labels and ticks on the bottom axis. If MATCH_POINT the ticks and labels will be drawn for each data point.
@@ -182,8 +181,7 @@ data class LineChartConfig(
      * The style to use for the chart line
      */
     val lineStyle: LineStyle = LineStyle(
-        display = true,
-        color = Color(0xFF45B7D1),
+        color = defaultLineColor,
         stroke = Stroke(
             width = 2f,
             cap = StrokeCap.Round,

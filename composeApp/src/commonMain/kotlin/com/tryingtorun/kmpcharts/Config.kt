@@ -14,9 +14,11 @@ import com.tryingtorun.kmpcharts.library.ChartConfig
 import com.tryingtorun.kmpcharts.library.ChartDataPoint
 import com.tryingtorun.kmpcharts.library.HorizontalGuideLineConfig
 import com.tryingtorun.kmpcharts.library.LineChartConfig
+import com.tryingtorun.kmpcharts.library.LineStyle
 import com.tryingtorun.kmpcharts.library.PopupConfig
 import com.tryingtorun.kmpcharts.library.RangeRectangleConfig
 import com.tryingtorun.kmpcharts.library.Sample
+import com.tryingtorun.kmpcharts.library.Scale
 import kotlin.random.Random
 
 class Config {
@@ -32,7 +34,6 @@ class Config {
 
             return LineChartConfig(
                 chartConfig = ChartConfig(
-                    defaultAxisTextAndLineColor = MaterialTheme.colorScheme.onSurface,
                     horizontalGuideLines = listOf(
                         HorizontalGuideLineConfig(
                             label = "Avg: $${avg.toInt()}",
@@ -72,14 +73,12 @@ class Config {
                         numberOfLabelsToShow = 5, // don't want clutter on the bottom axis then change this, depending on your data set
                         shiftLastLabel = true, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
                         shiftFirstLabel = true,
-                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     leftAxisConfig = AxisConfig(
                         valueFormatter = {
                             it.toCurrencyString()
                         },
                         numberOfLabelsToShow = 10,
-                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     popupConfig = PopupConfig(
                         valueFormatter = {
@@ -97,9 +96,7 @@ class Config {
         fun getLineChartMinimalConfig(data: List<ChartDataPoint>): LineChartConfig {
 
             return LineChartConfig(
-                chartConfig = ChartConfig(
-                    defaultAxisTextAndLineColor = MaterialTheme.colorScheme.onSurface,
-                )
+                chartConfig = ChartConfig()
             )
         }
 
@@ -115,9 +112,7 @@ class Config {
 
             return BarChartConfig(
            //     barFillBrushes = brushes,
-                chartConfig = ChartConfig(
-                    defaultAxisTextAndLineColor = MaterialTheme.colorScheme.onSurface,
-                )
+                chartConfig = ChartConfig()
             )
         }
 
@@ -152,7 +147,6 @@ class Config {
                         valueTextColor = MaterialTheme.colorScheme.onSurface,
                         summaryTextColor = MaterialTheme.colorScheme.onSurface,
                     ),
-                    defaultAxisTextAndLineColor = MaterialTheme.colorScheme.onSurface,
                     horizontalGuideLines = listOf(
                         HorizontalGuideLineConfig(
                             label = "Avg: ${averageTemp.toInt()} ℃",
@@ -202,16 +196,15 @@ class Config {
                         },
                         numberOfLabelsToShow = 4, // don't want clutter on the bottom axis then change this, depending on your data set
                         shiftLastLabel = false, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
-                        color = MaterialTheme.colorScheme.onSurface
                     ),
                     leftAxisConfig = AxisConfig(
-                        minValue = 0.0, // make sure we can see a bar for the smallest value by using an even smaller value for the axis (we could calculate this)
-                        maxValue = if (max > 18.0) max else 20.0,
+                        scale = Scale(min=0.0, max=if (max > 18.0) max else 20.0),
                         valueFormatter = {
                             "${it.toInt()}°C"
                         },
                         numberOfLabelsToShow = 5,
-                        color = MaterialTheme.colorScheme.onSurface
+                        showLabels = true,
+                        showTicks = true,
                     )
                 )
             )
