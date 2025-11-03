@@ -82,7 +82,7 @@ fun LineChart(
 
                 Box(modifier = Modifier.fillMaxSize()) {
 
-                    if (config?.leftAxisConfig != null) {
+                    if (config?.leftAxisConfig != null && (config.leftAxisConfig.showTicks || config.leftAxisConfig.showLabels || config.leftAxisConfig.showAxisLine ) ) {
 
                         /**
                          * Left area axis, ticks and labels

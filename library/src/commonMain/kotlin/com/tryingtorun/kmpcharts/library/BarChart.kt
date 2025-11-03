@@ -89,18 +89,19 @@ fun BarChart(
 
                 Box(modifier = Modifier.fillMaxSize()) {
 
-                    /**
-                     * Left area axis, ticks and labels
-                     */
-                    Box(
-                        modifier = Modifier
-                            .width(chartDimensions.leftAreaWidth)
+                    val chartConfig = config?.chartConfig
+                    if (chartConfig?.bottomAxisConfig != null
+                        && (chartConfig.bottomAxisConfig.showTicks || chartConfig.bottomAxisConfig.showLabels || chartConfig.bottomAxisConfig.showAxisLine)
                     ) {
-                        Canvas(
-                            modifier = Modifier.fillMaxSize()
+                        /**
+                         * Left area axis, ticks and labels
+                         */
+                        Box(
+                            modifier = Modifier.width(chartDimensions.leftAreaWidth)
                         ) {
-
-                            if( config != null ) {
+                            Canvas(
+                                modifier = Modifier.fillMaxSize()
+                            ) {
                                 drawLeftAxisLabelsAndTicks(
                                     density = density,
                                     textMeasurer = textMeasurer,
@@ -127,7 +128,7 @@ fun BarChart(
                             }
                     ) {
 
-                        if( config != null ) {
+                        if (config != null) {
                             Canvas(modifier = Modifier.fillMaxSize()) {
 
                                 drawBottomAxisLabelsAndTicks(
@@ -167,8 +168,7 @@ fun BarChart(
                         }
 
                         var modifier = Modifier.fillMaxSize()
-                        if( config?.chartConfig?.popupConfig != null  )
-                        {
+                        if (config?.chartConfig?.popupConfig != null) {
                             modifier = modifier.draggable(
                                 state = draggableState,
                                 orientation = Orientation.Horizontal,
@@ -361,7 +361,7 @@ fun BarChart(
                             val selectedData = data[selectedIndex!!]
                             val selectedCoordinate = coordinates[selectedIndex!!]
 
-                            if ( config != null && showPopup) {
+                            if (config != null && showPopup) {
                                 PopupBox(
                                     data = selectedData,
                                     config = config.chartConfig,
