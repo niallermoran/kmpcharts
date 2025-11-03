@@ -90,8 +90,9 @@ fun BarChart(
                 Box(modifier = Modifier.fillMaxSize()) {
 
                     val chartConfig = config?.chartConfig
-                    if (chartConfig?.bottomAxisConfig != null
-                        && (chartConfig.bottomAxisConfig.showTicks || chartConfig.bottomAxisConfig.showLabels || chartConfig.bottomAxisConfig.showAxisLine)
+
+                    if (chartConfig?.leftAxisConfig != null
+                        && (chartConfig.leftAxisConfig.showTicks || chartConfig.leftAxisConfig.showLabels || chartConfig.leftAxisConfig.showAxisLine)
                     ) {
                         /**
                          * Left area axis, ticks and labels
@@ -116,25 +117,25 @@ fun BarChart(
                     /**
                      * Bottom area axis, ticks and labels
                      */
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(chartDimensions.bottomAreaHeight)
-                            .offset {
-                                IntOffset(
-                                    0,
-                                    (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
-                                )
-                            }
+                    if (chartConfig?.bottomAxisConfig != null
+                        && (chartConfig.bottomAxisConfig.showTicks || chartConfig.bottomAxisConfig.showLabels || chartConfig.bottomAxisConfig.showAxisLine)
                     ) {
-
-                        if (config != null) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(chartDimensions.bottomAreaHeight)
+                                .offset {
+                                    IntOffset(
+                                        0,
+                                        (heightPixels - chartDimensions.bottomAreaHeightPixels).toInt()
+                                    )
+                                }
+                        ) {
                             Canvas(modifier = Modifier.fillMaxSize()) {
-
                                 drawBottomAxisLabelsAndTicks(
                                     density = density,
                                     textMeasurer = textMeasurer,
-                                    config = config.chartConfig,
+                                    config = config.chartConfig.bottomAxisConfig,
                                     chartDimensions = chartDimensions,
                                     coordinates = coordinates
                                 )

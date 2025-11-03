@@ -126,7 +126,7 @@ fun LineChart(
                                 drawBottomAxisLabelsAndTicks(
                                     density = density,
                                     textMeasurer = textMeasurer,
-                                    config = config,
+                                    config = config.bottomAxisConfig,
                                     chartDimensions = chartDimensions,
                                     coordinates = coordinates
                                 )
