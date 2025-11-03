@@ -224,8 +224,8 @@ fun BarChart(
                                         textMeasurer = textMeasurer,
                                         text = label,
                                         topLeft = Offset(
-                                            x = coordinate.x - textMeasurer.measure(label).size.width / 2,
-                                            y = coordinate.y - textMeasurer.measure(label).size.height - 5.dp.toPx(
+                                            x = coordinate.x - textMeasurer.measure(label, style = config.labelTextStyle).size.width / 2,
+                                            y = coordinate.y - textMeasurer.measure(label, style = config.labelTextStyle).size.height - 5.dp.toPx(
                                                 density
                                             )
                                         )
