@@ -160,20 +160,24 @@ fun LineChart(
 
                         }
 
+                        var modifier = Modifier.fillMaxSize()
+
+                        if (lineChartConfig?.chartConfig?.popupConfig != null) {
+                            modifier = modifier.draggable(
+                                state = draggableState,
+                                orientation = Orientation.Horizontal,
+                                onDragStarted = { offset ->
+                                    dragPosition = offset
+                                },
+                                onDragStopped = {
+                                    showPopup = false
+                                    selectedIndex = null
+                                }
+                            )
+                        }
+
                         Canvas(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .draggable(
-                                    state = draggableState,
-                                    orientation = Orientation.Horizontal,
-                                    onDragStarted = { offset ->
-                                        dragPosition = offset
-                                    },
-                                    onDragStopped = {
-                                        showPopup = false
-                                        selectedIndex = null
-                                    }
-                                )
+                            modifier = modifier
                         ) {
 
                             drawChartLine(
@@ -310,7 +314,7 @@ fun LineChart(
                             val selectedData = data[selectedIndex!!]
                             val selectedCoordinate = coordinates[selectedIndex!!]
 
-                            if (showPopup && config != null ) {
+                            if (showPopup && config != null) {
                                 PopupBox(
                                     data = selectedData,
                                     config = config,
@@ -371,7 +375,7 @@ private fun DrawScope.drawChartLine(
     drawPath(
         path = smoothPath,
         color = config?.lineStyle?.color ?: defaultLineColor,
-        style = config?.lineStyle?.stroke ?: Stroke(width=10f)
+        style = config?.lineStyle?.stroke ?: Stroke(width = 10f)
     )
 
 }

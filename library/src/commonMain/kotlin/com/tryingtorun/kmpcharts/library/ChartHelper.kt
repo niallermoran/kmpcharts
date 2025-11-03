@@ -431,12 +431,14 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
         /**
          * Draw axis line
          */
-        drawLine(
-            color = config.leftAxisConfig.lineStyle.color,
-            start = Offset(size.width, 0f),
-            end = Offset(size.width, height),
-            strokeWidth = config.leftAxisConfig.lineStyle.stroke.width
-        )
+        if( config.leftAxisConfig.showAxisLine) {
+            drawLine(
+                color = config.leftAxisConfig.lineStyle.color,
+                start = Offset(size.width, 0f),
+                end = Offset(size.width, height),
+                strokeWidth = config.leftAxisConfig.lineStyle.stroke.width
+            )
+        }
 
 
         for (i in 1..config.leftAxisConfig.numberOfLabelsToShow) {
@@ -514,18 +516,20 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
 ) {
 
     if (config.bottomAxisConfig != null) {
-        // the starting x-coord that everything else works from as the canvas covers the full width of the chart (to avoid clipping)
+        // the starting x-co-ord that everything else works from as the canvas covers the full width of the chart (to avoid clipping)
         val startX = chartDimensions.leftAreaWidthPixels + barWidth.toPx(density)
 
         /**
          * Draw the axis line
          */
+        if( config.bottomAxisConfig.showAxisLine) {
             drawLine(
                 color = config.bottomAxisConfig.lineStyle.color,
                 strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width,
                 start = Offset(x = startX, 0f),
                 end = Offset(size.width, 0f),
             )
+        }
 
         if (config.bottomAxisMethod == BottomAxisTicksAndLabelsDrawMethod.MATCH_POINT) {
 
@@ -614,7 +618,7 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
                 val isFirst = index == 0
                 val isLast = index == equallyDividedXPositions.size - 1
 
-                val xValue = equallyDividedXValues[index].toDouble()
+                val xValue = equallyDividedXValues[index]
 
                 // get the label details
                 val label = config.bottomAxisConfig.valueFormatter(xValue)

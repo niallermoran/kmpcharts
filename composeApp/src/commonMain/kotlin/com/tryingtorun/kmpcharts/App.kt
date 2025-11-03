@@ -101,7 +101,7 @@ fun App() {
                     val data = Sample.irelandMonthlyTemperatureData
                     BarChart(
                         data = data,
-                        config = if( showMinimumConfig ) null else Config.getBarchartSampleConfig(data)
+                        config = if( showMinimumConfig ) Config.getBarchartMinimalConfig(data) else Config.getBarchartSampleConfig(data)
                     )
                 }
 
@@ -121,7 +121,7 @@ fun App() {
                     val data = Sample.bitcoinWeekly2024
                     LineChart(
                         data = data,
-                        lineChartConfig = if( showMinimumConfig) null else Config.getLineChartSampleConfig(data)
+                        lineChartConfig = if( showMinimumConfig) Config.getLineChartMinimalConfig(data) else Config.getLineChartSampleConfig(data)
                     )
                 }
 

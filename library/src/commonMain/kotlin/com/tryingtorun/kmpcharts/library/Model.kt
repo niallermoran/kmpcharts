@@ -64,7 +64,7 @@ data class AxisConfig(
     /**
      * Whether or not to show labels for each point on the axis
      */
-    val showAxisLine: Boolean = true,
+    val showAxisLine: Boolean = showTicks,
 
     /**
      * The length of the ticks

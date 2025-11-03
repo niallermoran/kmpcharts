@@ -67,9 +67,9 @@ data class ChartConfig(
 )
 
 /**
- * Defines the scale range for an axis
+ * Defines the scale range for an axis. If values are not defined then the chart will auto calculate
  */
-data class Scale( val min: Double, val max: Double)
+data class Scale( val min: Double? = null, val max: Double? = null)
 
 
 /**
@@ -163,7 +163,7 @@ data class PopupConfig(
  */
 data class LineChartConfig(
 
-    val chartConfig: ChartConfig,
+    val chartConfig: ChartConfig = ChartConfig(),
 
     /**
      * The brush to use to fill under the line
@@ -197,7 +197,8 @@ data class LineChartConfig(
  */
 data class BarChartConfig(
 
-    val chartConfig: ChartConfig,
+    val chartConfig: ChartConfig = ChartConfig(),
+
     /**
      * The width of each bar compared to the space available
      */
