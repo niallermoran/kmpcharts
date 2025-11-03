@@ -88,7 +88,7 @@ object ChartHelper {
         textMeasurer: TextMeasurer
     ): IntSize {
 
-        if (config.leftAxisConfig == null)
+        if (config.leftAxisConfig == null || !config.leftAxisConfig.showLabels)
             return IntSize(0, 0)
 
         val largestValue = data.maxOfOrNull { it.yValue } ?: 0.0
@@ -211,40 +211,38 @@ object ChartHelper {
         /**
          * Calculations for left and bottom axis labels
          */
-        val leftLabelSize = if (config == null) IntSize(0, 0) else
-            if (config.leftAxisConfig == null) IntSize(
-                0,
-                0
-            ) else calculateLeftAxisLabelSize(
+        val leftLabelSizePixels =
+            if (config?.leftAxisConfig == null || !config.leftAxisConfig.showLabels) IntSize(
+                width = 0,
+                height = 0
+            )
+            else calculateLeftAxisLabelSize(
                 density = density,
                 data = data,
                 config = config,
                 textMeasurer = textMeasurer
             )
 
-        val leftLabelMaxWidth = if (config == null) 0.dp else
-            if (config.leftAxisConfig?.lineStyle != null) with(
-                density
-            ) { leftLabelSize.width.toDp() } else 0.dp
-
-        val bottomLabelSize =
-            if (config != null && config.bottomAxisConfig != null) calculateBottomAxisLabelSize(
+        val bottomLabelSizePixels =
+            if (config?.bottomAxisConfig == null || !config.bottomAxisConfig.showLabels) IntSize(
+                width = 0,
+                height = 0
+            )
+            else calculateBottomAxisLabelSize(
                 data,
                 config,
                 textMeasurer
-            ) else IntSize(0, 0)
+            )
 
-        val bottomLabelHeight = with(density) { bottomLabelSize.height.toDp() }
-        val bottomAreaHeight = if (config == null) 0.dp else
-            if (config.bottomAxisConfig == null) 0.dp else
-                bottomLabelHeight + config.bottomAxisConfig.labelPadding.calculateTopPadding() + config.bottomAxisConfig.labelPadding.calculateBottomPadding() + config.bottomAxisConfig.tickLength
 
-        val leftAreaWidth = if (config == null) 0.dp else
-            if (config.leftAxisConfig != null) leftLabelMaxWidth.plus(
-                (if (config.leftAxisConfig.showLabels) config.leftAxisConfig.labelPadding.leftPadding + config.leftAxisConfig.labelPadding.endPadding else 0.dp)
-            ).plus(
-                (if (config.leftAxisConfig.showTicks) config.leftAxisConfig.tickLength else 0.dp)
-            ) else 0.dp
+        val bottomAreaHeight = if (config?.bottomAxisConfig == null) 0.dp else
+            with(density) { bottomLabelSizePixels.height.toDp() } + config.bottomAxisConfig.labelPadding.calculateTopPadding() + config.bottomAxisConfig.labelPadding.calculateBottomPadding() + config.bottomAxisConfig.tickLength
+
+        val leftAreaWidth = if (config?.leftAxisConfig == null) 0.dp else {
+            with(density) {
+                leftLabelSizePixels.width.toDp() + if (config.leftAxisConfig.showTicks) config.leftAxisConfig.tickLength else 0.dp + if (config.leftAxisConfig.showLabels) config.leftAxisConfig.labelPadding.leftPadding + config.leftAxisConfig.labelPadding.endPadding else 0.dp
+            }
+        }
 
 
         val plotAreaHeight = height - bottomAreaHeight
@@ -256,13 +254,13 @@ object ChartHelper {
             plotAreaHeight = plotAreaHeight,
             plotAreaWidth = plotAreaWidth,
             bottomAreaHeight = bottomAreaHeight,
-            leftAxisLabelHeight = with(density) { leftLabelSize.height.toDp() },
+            leftAxisLabelHeight = with(density) { leftLabelSizePixels.height.toDp() },
 
             leftAreaWidthPixels = with(density) { leftAreaWidth.toPx() },
             plotAreaHeightPixels = with(density) { plotAreaHeight.toPx() },
             plotAreaWidthPixels = with(density) { plotAreaWidth.toPx() },
             bottomAreaHeightPixels = with(density) { bottomAreaHeight.toPx() },
-            leftAxisLabelHeightPixels = with(density) { leftLabelSize.height.toDp().toPx() }
+            leftAxisLabelHeightPixels = leftLabelSizePixels.height.toFloat()
         )
     }
 
@@ -431,7 +429,7 @@ internal fun DrawScope.drawLeftAxisLabelsAndTicks(
         /**
          * Draw axis line
          */
-        if( config.leftAxisConfig.showAxisLine) {
+        if (config.leftAxisConfig.showAxisLine) {
             drawLine(
                 color = config.leftAxisConfig.lineStyle.color,
                 start = Offset(size.width, 0f),
@@ -522,7 +520,7 @@ internal fun DrawScope.drawBottomAxisLabelsAndTicks(
         /**
          * Draw the axis line
          */
-        if( config.bottomAxisConfig.showAxisLine) {
+        if (config.bottomAxisConfig.showAxisLine) {
             drawLine(
                 color = config.bottomAxisConfig.lineStyle.color,
                 strokeWidth = config.bottomAxisConfig.lineStyle.stroke.width,
