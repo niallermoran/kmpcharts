@@ -94,27 +94,20 @@ class Config {
 
         @Composable
         fun getLineChartMinimalConfig(data: List<ChartDataPoint>): LineChartConfig {
-
-            return LineChartConfig(
-                chartConfig = ChartConfig()
-            )
+            return LineChartConfig()
         }
 
         @Composable
         fun getBarchartMinimalConfig(data: List<ChartDataPoint>): BarChartConfig {
-
-            val brushes = data.map { it ->
-                val red = Random.nextFloat()
-                val green = Random.nextFloat()
-                val blue = Random.nextFloat()
-                SolidColor(Color(red = red, green = green, blue = blue))
-            }
-
-            return BarChartConfig(
-           //     barFillBrushes = brushes,
-                chartConfig = ChartConfig()
-            )
+            return BarChartConfig(chartConfig = ChartConfig(
+                leftAxisConfig = AxisConfig(
+                    scale = Scale(0.0),
+                    showLabels = false,
+                    showTicks = false
+                )
+            ))
         }
+
 
         @Composable
         fun getBarchartSampleConfig(data: List<ChartDataPoint>): BarChartConfig {
