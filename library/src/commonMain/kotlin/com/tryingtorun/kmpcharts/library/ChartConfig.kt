@@ -40,11 +40,6 @@ data class ChartConfig(
 
 
     /**
-     * The method to use to draw ticks and labels on the bottom axis
-     */
-    val bottomAxisMethod: BottomAxisTicksAndLabelsDrawMethod = BottomAxisTicksAndLabelsDrawMethod.MATCH_POINT,
-
-    /**
      * The horizontal guide lines to draw on the chart
      */
     val horizontalGuideLines: List<HorizontalGuideLineConfig> = emptyList(),
@@ -76,7 +71,7 @@ data class Scale( val min: Double? = null, val max: Double? = null)
  * Method to use to display labels and ticks on the bottom axis. If MATCH_POINT the ticks and labels will be drawn for each data point.
  * If DIVIDE_EQUALLY is used, the ticks and labels will be drawn dividing the axis equally based on the number of labels to show
  */
-enum class BottomAxisTicksAndLabelsDrawMethod {
+enum class AxisTicksAndLabelsDrawMethod {
     MATCH_POINT, DIVIDE_EQUALLY
 }
 

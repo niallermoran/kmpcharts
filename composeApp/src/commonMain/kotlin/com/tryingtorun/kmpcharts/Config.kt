@@ -8,8 +8,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tryingtorun.kmpcharts.library.AxisConfig
+import com.tryingtorun.kmpcharts.library.AxisTicksAndLabelsDrawMethod
 import com.tryingtorun.kmpcharts.library.BarChartConfig
-import com.tryingtorun.kmpcharts.library.BottomAxisTicksAndLabelsDrawMethod
 import com.tryingtorun.kmpcharts.library.ChartConfig
 import com.tryingtorun.kmpcharts.library.ChartDataPoint
 import com.tryingtorun.kmpcharts.library.HorizontalGuideLineConfig
@@ -65,7 +65,6 @@ class Config {
                             ),
                         )
                     ),
-                    bottomAxisMethod = BottomAxisTicksAndLabelsDrawMethod.DIVIDE_EQUALLY,
                     bottomAxisConfig = AxisConfig(
                         valueFormatter = {
                             it.toInt().toDateString()
@@ -182,12 +181,10 @@ class Config {
                         valueFormatter = {
                             when (it.toInt()) {
                                 in 1..12 -> it.toInt().toMonthShortName()
-                                    .take(3)
-
                                 else -> throw IllegalArgumentException("Month number must be between 1 and 12")
                             }
                         },
-                        numberOfLabelsToShow = 4, // don't want clutter on the bottom axis then change this, depending on your data set
+                        numberOfLabelsToShow = 6, // don't want clutter on the bottom axis then change this, depending on your data set
                         shiftLastLabel = false, // shift the last label to the left to avoid clipping if not using rightgutterwidth above
                     ),
                     leftAxisConfig = AxisConfig(
@@ -196,8 +193,9 @@ class Config {
                             "${it.toInt()}°C"
                         },
                         numberOfLabelsToShow = 5,
-                        showLabels = true,
-                        showTicks = true,
+                        showLabels = false,
+                        showTicks = false,
+                        showAxisLine = false
                     )
                 )
             )

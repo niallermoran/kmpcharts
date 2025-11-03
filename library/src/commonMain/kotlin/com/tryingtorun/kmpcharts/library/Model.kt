@@ -104,8 +104,15 @@ data class AxisConfig(
      * Whether or not to shift the last label up or to the right to ensure it is visible
      * If you set this to false, then use gutter widths on the chart config to allow space and ensure these labels are not cut off
      */
-    val shiftLastLabel: Boolean = false
+    val shiftLastLabel: Boolean = false,
 
+
+    /**
+     * The method to use to draw ticks and labels on the axis
+     * AxisTicksAndLabelsDrawMethod.MATCH_POINT will draw ticks and labels for each data point on the axis
+     * AxisTicksAndLabelsDrawMethod.DIVIDE_EQUALLY will draw ticks and labels equally spaced along the axis
+     */
+    val ticksAndLabelsDrawMethod: AxisTicksAndLabelsDrawMethod = AxisTicksAndLabelsDrawMethod.MATCH_POINT,
 )
 
 data class LineStyle(
