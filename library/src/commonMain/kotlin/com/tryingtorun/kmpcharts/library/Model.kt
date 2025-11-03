@@ -20,18 +20,18 @@ val defaultLineColor = Color.Gray // default color used that works for both them
  * Data class representing a single bar in the chart
  */
 data class ChartDataPoint(
-    val xValue: Double,
-    val yValue: Double,
-    val summary: String
+    var xValue: Double,
+    var yValue: Double,
+    var summary: String
 )
 
 /**
  * Data class representing a single point in the chart plot area
  */
 data class DataPointPlotCoordinates(
-    val x: Float,
-    val y: Float,
-    val dataPoint: ChartDataPoint
+    var x: Float,
+    var y: Float,
+    var dataPoint: ChartDataPoint
 )
 
 data class AxisConfig(
