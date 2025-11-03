@@ -20,9 +20,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,79 +39,122 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun App() {
 
-    var showMinimumConfig by remember { mutableStateOf(false) }
+    var showMinimumConfig by rememberSaveable { mutableStateOf(false) }
+    var showBarChartFullScreen by rememberSaveable { mutableStateOf(false) }
+    var showLineChartFullScreen by rememberSaveable { mutableStateOf(false) }
 
+    BackHandler {
+        showBarChartFullScreen = false
+        showLineChartFullScreen = false
+    }
 
     AppTheme {
 
         Scaffold { padding ->
+
+            val inFullScreen = showLineChartFullScreen || showBarChartFullScreen
+            var columnModifier = Modifier.padding(padding).padding(12.dp).fillMaxSize()
+
+            if (!inFullScreen)
+                columnModifier = columnModifier.verticalScroll(rememberScrollState())
+
             Column(
-                modifier = Modifier
-                    .padding(padding).padding(12.dp)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
+                modifier = columnModifier,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                Text(text = "Platform: ${getPlatform().name}")
+                if (!inFullScreen) {
+                    Text(text = "Platform: ${getPlatform().name}")
 
-                Text(text = "Tap and Drag Charts to see Popup")
+                    Text(text = "Tap and Drag Charts to see Popup")
 
-                Spacer(modifier = Modifier.height(22.dp))
+                    Spacer(modifier = Modifier.height(22.dp))
 
-                Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable(onClick = {
-                    showMinimumConfig = !showMinimumConfig
-                })){
-                    Checkbox(
-                        checked = showMinimumConfig,
-                        onCheckedChange = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable(onClick = {
                             showMinimumConfig = !showMinimumConfig
-                        },
-                        enabled = true,
-                    )
-                    Text(text="Show Minimum Configuration")
-                }
+                        })
+                    ) {
+                        Checkbox(
+                            checked = showMinimumConfig,
+                            onCheckedChange = {
+                                showMinimumConfig = !showMinimumConfig
+                            },
+                            enabled = true,
+                        )
+                        Text(text = "Show Minimum Configuration")
+                    }
 
-                Spacer(modifier = Modifier.height(22.dp))
+                    Spacer(modifier = Modifier.height(22.dp))
 
-                Text(
-                    text = "Monthly Average Irish Temperatures (Celsius)",
-                    textAlign = TextAlign.Center,
-                    fontWeight = Bold,
-                    modifier = Modifier.padding(6.dp)
-                )
-
-
-                Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
-                    val data = Sample.irelandMonthlyTemperatureData
-                    BarChart(
-                        data = data,
-                        config = if( showMinimumConfig ) Config.getBarchartMinimalConfig(data) else Config.getBarchartSampleConfig(data)
+                    Text(
+                        text = "Monthly Average Irish Temperatures (Celsius)",
+                        textAlign = TextAlign.Center,
+                        fontWeight = Bold,
+                        modifier = Modifier.padding(6.dp)
                     )
                 }
 
-                Spacer(modifier = Modifier.height(22.dp))
+                if (!showLineChartFullScreen || showBarChartFullScreen) {
 
-                HorizontalDivider()
+                    val modifier = if (showBarChartFullScreen)
+                        Modifier.fillMaxSize()
+                    else
+                        Modifier.height(300.dp).fillMaxWidth()
 
-                Spacer(modifier = Modifier.height(22.dp))
+                    Box(modifier = modifier.padding(12.dp).clickable(onClick = {
+                        showBarChartFullScreen = !showBarChartFullScreen
+                    })) {
+                        val data = Sample.irelandMonthlyTemperatureData
+                        BarChart(
+                            data = data,
+                            config = if (showMinimumConfig) Config.getBarchartMinimalConfig(data) else Config.getBarchartSampleConfig(
+                                data
+                            )
+                        )
+                    }
+                }
 
-                Text(
-                    text = "2024 Bitcoin Price Trend",
-                    fontWeight = Bold,
-                    textAlign = TextAlign.Center
-                )
+                if (!inFullScreen) {
+                    Spacer(modifier = Modifier.height(22.dp))
 
-                Box(modifier = Modifier.fillMaxWidth().height(300.dp).padding(12.dp)) {
-                    val data = Sample.bitcoinWeekly2024
-                    LineChart(
-                        data = data,
-                        lineChartConfig = if( showMinimumConfig) Config.getLineChartMinimalConfig(data) else Config.getLineChartSampleConfig(data)
+                    HorizontalDivider()
+
+                    Spacer(modifier = Modifier.height(22.dp))
+
+
+                    Text(
+                        text = "2024 Bitcoin Price Trend",
+                        fontWeight = Bold,
+                        textAlign = TextAlign.Center
                     )
+                }
+
+                if (!showBarChartFullScreen || showLineChartFullScreen) {
+
+                    val lineChartModifier = if (showLineChartFullScreen)
+                        Modifier.fillMaxSize()
+                    else
+                        Modifier.height(300.dp).fillMaxWidth()
+
+                    Box(modifier = lineChartModifier.padding(12.dp).clickable(onClick = {
+                        showLineChartFullScreen = !showLineChartFullScreen
+                    })) {
+                        val data = Sample.bitcoinWeekly2024
+                        LineChart(
+                            data = data,
+                            lineChartConfig = if (showMinimumConfig) Config.getLineChartMinimalConfig(
+                                data
+                            ) else Config.getLineChartSampleConfig(data)
+                        )
+                    }
+
                 }
 
 
@@ -141,7 +187,7 @@ fun Int.toDateString(): String {
 
     val instant = Instant.fromEpochSeconds(this.toLong())
     val dt = instant.toLocalDateTime(TimeZone.UTC)
-    return  "${dt.date.day} ${(dt.date.month.ordinal + 1).toMonthShortName()}"
+    return "${dt.date.day} ${(dt.date.month.ordinal + 1).toMonthShortName()}"
 }
 
 

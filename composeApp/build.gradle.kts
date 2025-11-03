@@ -60,7 +60,8 @@ kotlin {
         }
         commonMain.dependencies {
 
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.ui.backhandler)
             implementation(project(":library"))
             implementation(compose.runtime)
             implementation(compose.foundation)
